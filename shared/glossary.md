@@ -38,6 +38,13 @@
 
 ## A〜E
 
+### AFI / SAFI(Address Family Identifier / Subsequent Address Family Identifier)
+
+- **定義**: MP-BGP が運ぶ情報の型を宣言する番号の組(アドレスファミリ)。AFI はアドレスがどのネットワーク層プロトコルのものか(1 = IPv4、2 = IPv6、25 = L2VPN)、SAFI はその情報の用途・付加構造(1 = ユニキャスト、128 = MPLS ラベル付き VPN、70 = EVPN)を示し、(AFI, SAFI) の組が NLRI フィールドの解釈を決める。値は IANA のレジストリで管理される。交換するファミリはケイパビリティ広告で合意する。
+- **初出章**: `03_bgp/05_mp_bgp.md`(言及は `02_vlan_vxlan_evpn/04_vxlan_control_plane.md` が先行)
+- **関連RFC**: RFC 4760
+- **関連用語**: MP-BGP、NLRI、MP_REACH_NLRI / MP_UNREACH_NLRI、ケイパビリティ広告
+
 ### AS(Autonomous System / 自律システム)
 
 - **定義**: 単一かつ明確に定義されたルーティングポリシーの下で運用される、1つ以上のプレフィックスのまとまり。境界は物理ではなく意思決定(ポリシー)の境界。各 AS は AS 番号(ASN、RFC 6793 で32ビット化)で識別される。
@@ -255,10 +262,17 @@
 
 ### MP-BGP(Multiprotocol BGP)
 
-- **定義**: BGP が IPv4 ユニキャスト経路以外の情報(IPv6 経路、VPN 経路、EVPN の MAC 情報など)を運べるようにする拡張。運ぶ情報の種類をアドレスファミリの番号組(AFI/SAFI)で区別する。EVPN はこの枠組みの1ファミリとして定義されている。詳細は第3部で扱う。
+- **定義**: BGP が IPv4 ユニキャスト経路以外の情報(IPv6 経路、VPN 経路、EVPN の MAC 情報など)を運べるようにする拡張。運ぶ情報の種類をアドレスファミリの番号組(AFI/SAFI)で区別する。実体は2つのパスアトリビュート(MP_REACH_NLRI / MP_UNREACH_NLRI)であり、AS_PATH・コミュニティ・ポリシーの枠組みは全ファミリ共通に働く。EVPN はこの枠組みの1ファミリとして定義されている。
 - **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(詳細は `03_bgp/05_mp_bgp.md`)
 - **関連RFC**: RFC 4760
-- **関連用語**: EVPN、ピア、パスベクタ
+- **関連用語**: EVPN、ピア、パスベクタ、AFI / SAFI、MP_REACH_NLRI / MP_UNREACH_NLRI
+
+### MP_REACH_NLRI / MP_UNREACH_NLRI
+
+- **定義**: MP-BGP の本体である2つのパスアトリビュート(Type 14 / 15、いずれも optional non-transitive)。従来の UPDATE メッセージの NLRI・撤回リストフィールドに置かれていた到達性情報を属性の中へ移設したもので、先頭の AFI/SAFI が中身の型を宣言する。MP_REACH_NLRI はネクストホップも内包し、ファミリに応じた形(IPv6 のグローバル+リンクローカルの2個、EVPN の VTEP アドレス等)を運べる。non-transitive のため、理解しない実装のところで情報は静かに止まり、処理できない者へ中継されない。
+- **初出章**: `03_bgp/05_mp_bgp.md`(言及は `03_bgp/03_path_attributes.md` にもあり)
+- **関連RFC**: RFC 4760
+- **関連用語**: MP-BGP、AFI / SAFI、NLRI、パスアトリビュート
 
 ### Null ルート(null route / 廃棄経路)
 
@@ -451,6 +465,13 @@
 - **定義**: 同一プレフィックスへの経路を複数の情報源が主張するとき、どれを RIB に載せるかを決める「情報源の信頼度」。小さいほど優先。RFC 標準ではなくベンダー実装上の慣例(Juniper では route preference)。
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: メトリック、RIB
+
+### ケイパビリティ広告(capability advertisement)
+
+- **定義**: BGP の OPEN メッセージの Optional Parameters で、対応する拡張機能(MP-BGP のアドレスファミリ、Route Refresh、32 ビット AS 番号など)を双方が申告する仕組み。双方が申告した機能(積集合)だけがセッションで有効になる。交換は OPEN でしか行えないため、アドレスファミリの後付けはセッションの再確立を伴う。BGP が後方互換を保って拡張されてきた基盤。
+- **初出章**: `03_bgp/01_bgp_basics.md`(詳細は `03_bgp/05_mp_bgp.md`)
+- **関連RFC**: RFC 5492
+- **関連用語**: BGP、MP-BGP、AFI / SAFI、ピア
 
 ### 経路集約(route aggregation)
 
