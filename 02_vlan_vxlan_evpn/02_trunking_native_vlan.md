@@ -7,7 +7,7 @@
 前提知識は [前章](01_vlan_basics.md) で扱った 802.1Q タグのフォーマットと、
 PVID(入方向の分類)/ untagged(出方向のタグ除去)が独立した属性であるという理解である。
 章の後半では、タグを二重に積む 802.1ad(QinQ)まで進み、
-[VXLAN(後述: `03_vxlan_fundamentals.md`)](03_vxlan_fundamentals.md) への橋を架ける。
+[VXLAN](03_vxlan_fundamentals.md) への橋を架ける。
 
 ## 導入 — そもそも何のための仕組みか
 
@@ -207,7 +207,7 @@ QinQ により識別空間は 4094 × 4094 ≒ 約 1670 万に広がる。それ
 全顧客の端末の MAC アドレスを学習しなければならず**、フラッディングも
 事業者網全体に及ぶ。識別子の数ではなく、**L2 の学習・フラッディングという
 動作原理そのものが規模の壁になる**——この認識が、L3 ネットワークの上に
-L2 をトンネルする [VXLAN(後述: `03_vxlan_fundamentals.md`)](03_vxlan_fundamentals.md)
+L2 をトンネルする [VXLAN](03_vxlan_fundamentals.md)
 へ進む動機である。
 
 ## プロトコル動作の詳細
