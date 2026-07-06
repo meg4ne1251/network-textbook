@@ -10,8 +10,8 @@
 
 ## 現在の状態
 
-- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜13(第3部進行中)
-- 次のステップ: Step 14 `03_bgp/03_path_attributes.md`(パスアトリビュート)
+- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜14(第3部進行中)
+- 次のステップ: Step 15 `03_bgp/04_policy_control.md`(route-map, prefix-list, community)
 
 ---
 
@@ -361,3 +361,38 @@
   03_path_attributes・05_mpls_srv6/01 への「(後述: ...)」参照は該当章の執筆後に
   リンク化する。
 - 次のステップ: Step 14 `03_bgp/03_path_attributes.md` から着手する
+
+## Step 14: `03_bgp/03_path_attributes.md` (完了日: 2026-07-06)
+
+- 完了内容: パスアトリビュートの章を執筆。「経路=プレフィックス+属性の束(履歴書)」を軸に、
+  TLV フォーマットとフラグ(Optional/Transitive/Partial/Extended Length)、4分類と
+  「未知属性の扱い」による後方互換な拡張性(AS4_PATH を実例に)、属性カタログ
+  (ORIGIN、AS_PATH の AS_SEQUENCE/AS_SET と RFC 6472、NEXT_HOP、LOCAL_PREF、MED、
+  ATOMIC_AGGREGATE/AGGREGATOR)、スコープの設計(意思は AS 内・希望は隣まで・
+  事実は全世界)、経路選択プロセス(RFC 4271 Section 9.1、3フェーズ+多段比較の表)、
+  ホットポテトルーティング、実装拡張(Weight・古い経路の優先)、ウォークスルー
+  (マルチホームで AS_PATH 長 vs LOCAL_PREF の2つの結末)、入口制御の4手段
+  (広告停止 > MED > プリペンド > コミュニティ依頼)、FRR の bestpath 理由表示の
+  読み方、トラブルシューティング4種(プリペンド不発=相手の LOCAL_PREF、
+  MED 不発=same-AS 制約と実装ノブ、選択の食い違い=oldest/router-id、
+  属性エラーと RFC 7606 treat-as-withdraw)を記載。
+- 決定事項: (1) 表記: 「経路選択プロセス(Decision Process)」を標準表記として
+  用語集登録。(2) 章の分担: 属性の意味論と比較順序は本章、属性を書き換える道具
+  (route-map、コミュニティ)は 04章、MP_REACH_NLRI は 05章、
+  ORIGINATOR_ID/CLUSTER_LIST は 06章に委ねる(本文で明示)。COMMUNITY 類の
+  用語集登録も 04章で行う。(3) Weight・oldest route・MED の解釈ノブは
+  「RFC 外の実装慣例」と明記(管理距離と同じ扱いのルール)。
+  (4) 「出口は命令できるが入口は頼むしかない」「トラフィックは広告と逆向きに流れる」を
+  第3部のポリシー章(04)へ接続する基本構図として導入。(5) 用語集へ6語登録
+  (AS_PATH プリペンド、LOCAL_PREF、MED、ORIGIN、経路選択プロセス、
+  パスアトリビュート)+ AS_PATH の関連用語を更新。(6) 01章・02章の
+  「(後述: 03_path_attributes.md)」参照3箇所をリンク化。
+- 未解決・要検証事項: (1) 「MED なしは最小値 0(最優先)として扱う」は RFC 4271
+  Section 9.1.2.2 の規定として記載したが、条文の正確な文言は要再確認
+  (RFC 1771 時代は未規定で実装差の源だった経緯も含め)。(2) FRR の
+  `show bgp ipv4 unicast` の bestpath 理由表示(best (AS Path) 等)は
+  バージョンにより文言に微差がありうる。(3) 属性エラー起因の広域障害の実例
+  (2010年前後の事案)は特定の事件名を挙げず「複数回発生している」とのみ記載。
+  (4) 本章から 04_policy_control・05_mp_bgp・06_large_scale_design への
+  「(後述: ...)」参照は該当章の執筆後にリンク化する。
+- 次のステップ: Step 15 `03_bgp/04_policy_control.md` から着手する

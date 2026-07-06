@@ -50,7 +50,13 @@
 - **定義**: BGP の経路広告に含まれる、その経路が通ってきた AS 番号の並び(必須パスアトリビュートの一つ)。受信側は自 AS 番号が含まれる広告を破棄することでループを検出する(パスベクタの本質)。同時に、ポリシー判断と経路選択(パス長の比較)の材料でもある。
 - **初出章**: `03_bgp/01_bgp_basics.md`(詳細は `03_bgp/03_path_attributes.md`)
 - **関連RFC**: RFC 4271
-- **関連用語**: パスベクタ、BGP、AS
+- **関連用語**: パスベクタ、BGP、AS、パスアトリビュート、AS_PATH プリペンド
+
+### AS_PATH プリペンド(AS path prepending)
+
+- **定義**: 自 AS 番号を AS_PATH に複数回積んで広告し、経路をわざと長く見せることで、他 AS からの流入トラフィックを別の経路へ誘導しようとする手法。遠くの AS にも伝わる唯一の入口制御の細工だが、経路選択プロセスでは AS_PATH 長より先に LOCAL_PREF が比較されるため、効果は相手のポリシー次第の「弱い希望」にとどまる。
+- **初出章**: `03_bgp/03_path_attributes.md`
+- **関連用語**: AS_PATH、経路選択プロセス、LOCAL_PREF
 
 ### Adj-RIB-In / Loc-RIB / Adj-RIB-Out
 
@@ -205,6 +211,13 @@
 - **関連RFC**: RFC 9135、RFC 8365
 - **関連用語**: VNI、IRB
 
+### LOCAL_PREF(Local Preference)
+
+- **定義**: 経路を AS としてどれくらい好むかを表す well-known 属性(4 オクテット、大きいほど優先)。iBGP ピアへの広告には必ず付け、eBGP ピアへは付けない(RFC 4271 Section 5.1.5)— AS の外に出ない、出口選択の意思統一の道具である。経路選択プロセスの最初の比較段であり、AS_PATH 長など他のすべての材料に優先する。既定値 100 は実装慣例(RFC は既定値を定めない)。
+- **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/02_ibgp_ebgp.md` にもあり)
+- **関連RFC**: RFC 4271
+- **関連用語**: パスアトリビュート、経路選択プロセス、MED、eBGP / iBGP
+
 ### LSA(Link-State Advertisement)
 
 - **定義**: OSPF において LSDB に格納される情報の1単位。生成ルータ・シーケンス番号・寿命(MaxAge 3600秒、リフレッシュ 1800秒)を持ち、フラッディングの規律(新旧判定・ACK・エージング)は LSA 単位で適用される。主要タイプ: Type 1(Router)/2(Network)はエリア内の一次情報、Type 3(Summary)はエリア間の距離情報、Type 5(AS-External)は再配送された外部経路。
@@ -233,6 +246,13 @@
 - **関連RFC**: RFC 7432
 - **関連用語**: EVPN、VTEP、ルートタイプ
 
+### MED(Multi-Exit Discriminator / MULTI_EXIT_DISC)
+
+- **定義**: 複数の地点で接続する隣接 AS に対して「入ってくるならこの入口を使ってほしい」という希望を伝える optional non-transitive 属性(4 オクテット、小さいほど優先)。eBGP で隣接 AS へ渡り、その AS 内では iBGP で運ばれるが、さらに先の AS へは伝搬してはならない(RFC 4271 Section 5.1.4)。既定では同一の隣接 AS から受けた経路どうしでしか比較されない。属性を持たない経路は最小値 0(最優先)として扱うのが RFC の規定だが、解釈を変える実装オプション(missing-as-worst 等)が多数あり、関係者の設定合わせが前提の属性である。
+- **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/02_ibgp_ebgp.md` にもあり)
+- **関連RFC**: RFC 4271
+- **関連用語**: パスアトリビュート、経路選択プロセス、LOCAL_PREF
+
 ### MP-BGP(Multiprotocol BGP)
 
 - **定義**: BGP が IPv4 ユニキャスト経路以外の情報(IPv6 経路、VPN 経路、EVPN の MAC 情報など)を運べるようにする拡張。運ぶ情報の種類をアドレスファミリの番号組(AFI/SAFI)で区別する。EVPN はこの枠組みの1ファミリとして定義されている。詳細は第3部で扱う。
@@ -259,6 +279,13 @@
 - **初出章**: `03_bgp/01_bgp_basics.md`
 - **関連RFC**: RFC 4271、RFC 4760
 - **関連用語**: BGP、MP-BGP、ルートタイプ
+
+### ORIGIN
+
+- **定義**: 経路情報が最初に BGP に入ったときの由来を示す well-known mandatory 属性。IGP(0、network 文などによる明示的な注入)、EGP(1、旧 EGP プロトコル由来の歴史的値)、INCOMPLETE(2、再配送が典型)の3値で、経路選択では値の小さいほうが好まれる。
+- **初出章**: `03_bgp/03_path_attributes.md`
+- **関連RFC**: RFC 4271
+- **関連用語**: パスアトリビュート、経路選択プロセス、再配送
 
 ### OSPF(Open Shortest Path First)
 
@@ -413,6 +440,13 @@
 - **関連用語**: CIDR、Null ルート
 - **表記**: route の訳語は本書では「経路」に統一する(「ルート」とは書かない。ただし「デフォルトルート」「Null ルート」など複合語の慣用名は除く)
 
+### 経路選択プロセス(Decision Process)
+
+- **定義**: BGP スピーカーが同一プレフィックスへの複数の経路から Loc-RIB に載せる1本を決める手続き(RFC 4271 Section 9.1)。単一メトリックの最小化ではなく、LOCAL_PREF → AS_PATH 長 → ORIGIN → MED → eBGP/iBGP → ネクストホップへの IGP コスト → BGP Identifier という多段の属性比較で、差がついた段で終了する。管理者はポリシーで属性を書き換えることにより判定結果を操作する。Weight や「古い経路の優先」は RFC 外の実装慣例。
+- **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/01_bgp_basics.md` にもあり)
+- **関連RFC**: RFC 4271
+- **関連用語**: パスアトリビュート、LOCAL_PREF、MED、Adj-RIB-In / Loc-RIB / Adj-RIB-Out
+
 ### 再帰的ルックアップ(recursive lookup)
 
 - **定義**: ネクストホップが直結でない経路について、そのネクストホップ自身への経路をテーブルで引き直し、直結インタフェースに行き着くまで解決する処理。解決できない経路は無効となり FIB に載らない。
@@ -511,6 +545,13 @@
 - **初出章**: `03_bgp/02_ibgp_ebgp.md`
 - **関連RFC**: RFC 4271(Section 5.1.3 の NEXT_HOP 規則)
 - **関連用語**: ネクストホップ、再帰的ルックアップ、eBGP / iBGP
+
+### パスアトリビュート(path attribute)
+
+- **定義**: BGP の UPDATE で NLRI とともに運ばれる経路の付帯情報(TLV 形式)。well-known / optional × transitive / non-transitive の4分類が「未知の属性を受け取ったときの動作」まで規定しており(未知の optional transitive は Partial ビットを立てて中継)、これが BGP の後方互換な拡張性の基盤になっている。経路選択の材料とポリシーの荷札という2つの役割を持つ。
+- **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/01_bgp_basics.md` にもあり)
+- **関連RFC**: RFC 4271
+- **関連用語**: AS_PATH、LOCAL_PREF、MED、ORIGIN、NLRI、経路選択プロセス
 
 ### パスベクタ(path vector)
 
