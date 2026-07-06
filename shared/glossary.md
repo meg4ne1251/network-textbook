@@ -100,6 +100,13 @@
 - **関連RFC**: RFC 7432、RFC 9161(Proxy-ARP/ND の運用詳細)
 - **関連用語**: EVPN、BUM トラフィック、ARP
 
+### ESI(Ethernet Segment Identifier)
+
+- **定義**: 端末やスイッチを複数の VTEP へ同時接続(マルチホーミング)するとき、その接続リンクの束(イーサネットセグメント)を識別する 10 オクテットの値。同じ ESI を RT-4 で広告し合う VTEP どうしが冗長グループを自動発見し、DF(Designated Forwarder)選出・エイリアシング・マスウィズドローの基盤になる。単一接続では 0。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 7432、RFC 8365
+- **関連用語**: EVPN、VTEP、ルートタイプ
+
 ### EtherType
 
 - **定義**: Ethernetヘッダ内でペイロードの上位プロトコルを示す2オクテットのフィールド。0x0800=IPv4、0x86DD=IPv6、0x0806=ARP、0x8100=VLANタグ。
@@ -111,7 +118,7 @@
 - **定義**: MAC アドレスの所在や VTEP のメンバーシップといった L2 の到達性情報を、MP-BGP の経路情報(AFI 25 = L2VPN / SAFI 70 = EVPN)として配布するコントロールプレーン。本体仕様は RFC 7432(MPLS 網向け)で、RFC 8365 が VXLAN 等のオーバーレイへの適用を定める。所在の事前配布により未知ユニキャストのフラッディングをほぼ解消し、ARP サプレッションと RT-3 によるフラッディングリスト自動構築を実現する。
 - **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(詳細は `02_vlan_vxlan_evpn/05_evpn_vxlan.md`)
 - **関連RFC**: RFC 7432、RFC 8365
-- **関連用語**: MP-BGP、VXLAN、VTEP、ヘッドエンドレプリケーション、ARP サプレッション
+- **関連用語**: MP-BGP、VXLAN、VTEP、ヘッドエンドレプリケーション、ARP サプレッション、ルートタイプ、IRB、MAC-VRF
 
 ## F〜J
 
@@ -140,6 +147,13 @@
 - **初出章**: `01_fundamentals/05_igp_overview.md`
 - **関連用語**: EGP、AS、リンクステート、ディスタンスベクタ
 
+### IRB(Integrated Routing and Bridging / 統合ルーティング&ブリッジング)
+
+- **定義**: EVPN オーバーレイで、ルーティングとブリッジングを各 VTEP(リーフ)が一体的に行う構成。全リーフが同一ゲートウェイを持つエニーキャストゲートウェイと組み合わせる。テナントの L3VNI を介して入口・出口の双方がルーティングする対称(symmetric)方式が主流で、入口だけがルーティングし宛先 L2VNI へ直接送り込む非対称(asymmetric)方式もある。両方式はファブリック内で混在できない。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 9135
+- **関連用語**: エニーキャストゲートウェイ、L2VNI / L3VNI、EVPN、SVI
+
 ### IS-IS(Intermediate System to Intermediate System)
 
 - **定義**: リンクステート型 IGP の一つ。OSPF とアルゴリズムはほぼ同型だが、IP ではなく L2 上で直接動作し、情報を TLV 形式で運ぶため拡張が容易。大規模 ISP・データセンターで広く使われる。
@@ -148,6 +162,13 @@
 - **関連用語**: OSPF、リンクステート、LSDB
 
 ## K〜O
+
+### L2VNI / L3VNI
+
+- **定義**: EVPN/VXLAN における VNI の役割区分。L2VNI は端末を収容するブロードキャストドメイン(サブネット)に対応する通常の VNI。L3VNI はテナント(IP-VRF)ごとに1つ割り当てるサブネット間ルーティング専用の VNI で、対称 IRB においてオーバーレイ上のルータ間リンクとして機能する。RT-2 は Label1 に L2VNI、Label2 に L3VNI を載せて L2/L3 両方の知識を1本で運ぶ。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 9135、RFC 8365
+- **関連用語**: VNI、IRB
 
 ### LSA(Link-State Advertisement)
 
@@ -162,6 +183,20 @@
 - **初出章**: `01_fundamentals/04_distance_vector_link_state.md`
 - **関連RFC**: RFC 2328(OSPFv2)
 - **関連用語**: リンクステート、SPF、フラッディング
+
+### MAC-VRF
+
+- **定義**: VTEP(仕様の用語では PE)がテナントごとに持つ独立の MAC テーブル(仮想スイッチインスタンス)。EVPN の経路は RT の一致により対応する MAC-VRF へ選択的に取り込まれる。VXLAN の VLAN-based サービスでは 1 MAC-VRF = 1 VNI の対応が基本。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 7432
+- **関連用語**: RD、RT、VNI、EVPN
+
+### MAC モビリティ(MAC mobility)
+
+- **定義**: 端末(VM)が別 VTEP 配下へ移動したとき、EVPN が所在情報を全 VTEP で正しく更新する仕組み。RT-2 に付与する MAC Mobility 拡張コミュニティのシーケンス番号で広告の新旧を順序付け、番号の大きい広告が勝ち、旧 VTEP は自広告を撤回する。番号の急増(推奨既定: 180 秒間に 5 回超)は同一 MAC の二重存在(クローン事故・L2 ループ)の兆候として検出され、広告更新が凍結される(重複 MAC 検出)。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 7432
+- **関連用語**: EVPN、VTEP、ルートタイプ
 
 ### MP-BGP(Multiprotocol BGP)
 
@@ -205,11 +240,26 @@
 - **初出章**: `02_vlan_vxlan_evpn/01_vlan_basics.md`
 - **関連用語**: VLAN、802.1Q、アクセスポート
 
+### RD(Route Distinguisher / ルート識別子)
+
+- **定義**: MP-BGP で運ぶ経路の先頭に付ける 8 オクテットの値。テナントごとのテーブルから出た「同じ中身」の経路(同一 MAC・同一プレフィックス)を BGP 上で別経路として共存させるための一意化の接頭辞であり、それ自体に仕分けの意味はない(仕分けは RT が担う)。実装は「VTEP アドレス:内部番号」等の形式で自動生成することが多い。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(詳細は第3部・第5部)
+- **関連RFC**: RFC 4364、RFC 7432
+- **関連用語**: RT、MP-BGP、MAC-VRF
+
 ### RIB(Routing Information Base)
 
 - **定義**: 各情報源(直結・静的・動的プロトコル)が経路を登録する制御用テーブル。管理距離・メトリックによる選択はここで行われ、勝者が FIB へ展開される。本書で単に「ルーティングテーブル」と言う場合は RIB を指す。
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: FIB、管理距離、メトリック
+
+### RT(Route Target / ルートターゲット)
+
+- **定義**: 経路の取り込み先を決める仕分けラベル(BGP 拡張コミュニティの一種)。各 VRF / MAC-VRF は export RT(広告に付ける)と import RT(一致する経路を取り込む)を持ち、同じ RT を共有する VTEP 群が1つの仮想ネットワークの参加者集合になる。EVPN/VXLAN では「AS 番号:VNI」の自動導出(RFC 8365)が既定のため、AS 番号が揃わない設計では不一致に注意。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(詳細は第3部)
+- **関連RFC**: RFC 4360、RFC 8365
+- **関連用語**: RD、ルートタイプ、EVPN、MAC-VRF
+- **表記**: 本書では「RT-数字」(RT-2 等)はルートタイプを、単独の「RT」はルートターゲットを指すと使い分ける
 
 ### SPF(Shortest Path First / 最短経路優先計算)
 
@@ -280,6 +330,12 @@
 - **定義**: オーバーレイのトンネルパケットを実際に運ぶ、下位の物理ネットワーク。VXLAN では VTEP 間の IP 到達性を提供する L3 網を指し、ECMP・IGP の高速収束といった L3 の道具立てをそのまま使える。中継ルータはオーバーレイの中身(端末の MAC など)を一切関知しない。単に「アンダーレイ」とも呼ぶ。
 - **初出章**: `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`
 - **関連用語**: オーバーレイネットワーク、VXLAN、VTEP、ECMP
+
+### エニーキャストゲートウェイ(anycast gateway)
+
+- **定義**: 全リーフ(VTEP)が、各サブネットの SVI を同一のゲートウェイ IP アドレスと同一の MAC アドレスで持つ分散ゲートウェイ構成。端末から見るとデフォルトゲートウェイが常に「手元のリーフ」になり、ライブマイグレーションで収容先が変わってもゲートウェイの再解決が不要で通信が途切れない。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連用語**: IRB、SVI、デフォルトゲートウェイ
 
 ### エリア(area / OSPF エリア)
 
@@ -484,6 +540,12 @@
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: 管理距離、ECMP
 
+### リーフ・スパイン(leaf-spine / Clos 網)
+
+- **定義**: 全リーフが全スパインへ接続し、リーフ同士・スパイン同士は接続しない、データセンターの標準トポロジ。端末収容とカプセル化(VTEP)・EVPN への参加はリーフが担い、スパインはアンダーレイの中継専用でオーバーレイ(VNI・MAC)を関知しない。任意のリーフ間が等しく2ホップになり、スパイン本数分の ECMP が常に効く。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(言及は `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`)
+- **関連用語**: VTEP、アンダーレイネットワーク、ECMP
+
 ### リンクステート(link state)
 
 - **定義**: 動的ルーティングの方式の一つ。各ルータが自分の直結リンクの状態(一次情報)を全ルータへフラッディングし、全員が同一の地図(LSDB)を共有した上で、各自がダイクストラ法(SPF)で最短経路を計算する。伝搬と計算の分離により収束が速いが、メモリ・CPU と複雑さが代償。代表は OSPF と IS-IS。
@@ -504,6 +566,14 @@
 - **初出章**: `01_fundamentals/05_igp_overview.md`
 - **関連RFC**: RFC 2328
 - **関連用語**: OSPF、隣接
+
+### ルートタイプ(EVPN route type)
+
+- **定義**: EVPN が MP-BGP で運ぶ情報の型。RT-1(Ethernet Auto-Discovery、冗長化)、RT-2(MAC/IP Advertisement、MAC の所在)、RT-3(Inclusive Multicast Ethernet Tag、VNI メンバーシップ)、RT-4(Ethernet Segment、冗長グループの発見と DF 選出)、RT-5(IP Prefix、MAC を伴わない L3 経路。RFC 9136)。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(RT-2/RT-3)、全体像は `02_vlan_vxlan_evpn/05_evpn_vxlan.md`
+- **関連RFC**: RFC 7432、RFC 9136
+- **関連用語**: EVPN、RT
+- **表記**: 「RT-数字」と略記する(単独の「RT」はルートターゲットを指す)
 
 ### ロンゲストマッチ(longest prefix match)
 
