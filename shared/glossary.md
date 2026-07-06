@@ -303,6 +303,13 @@
 - **関連RFC**: RFC 7761(PIM-SM)、RFC 5015(PIM-BiDir)
 - **関連用語**: IGMP、BUM トラフィック
 
+### prefix-list(プレフィックスリスト)
+
+- **定義**: 経路を宛先プレフィックスの値と長さの範囲で選別するフィルタ。各行は「プレフィックス/L + ge/le」の形で、「上位 L ビットの一致」と「プレフィックス長が範囲内(ge/le 省略時はちょうど L)」の2条件の AND を検査する。行は番号順の先勝ちで評価され、末尾は暗黙の deny。長さの範囲指定は、ロンゲストマッチの世界で「この集約の配下のどの細かさまで許すか」を直接記述するための構文である。
+- **初出章**: `03_bgp/04_policy_control.md`
+- **関連用語**: route-map、ロンゲストマッチ、経路集約
+- **表記**: 実装の設定語彙に合わせ、英字のまま「prefix-list」と書く
+
 ### PVID(Port VLAN Identifier)
 
 - **定義**: ポートに設定される、受信したタグなしフレームをどの VLAN に分類するかを決める値(入方向の分類規則)。出方向のタグ除去(untagged 設定)とは独立の属性であり、アクセスポートは「PVID と untagged を同じ VLAN に設定したポート」の慣用名である。
@@ -322,12 +329,18 @@
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: FIB、管理距離、メトリック
 
+### route-map(ルートマップ)
+
+- **定義**: マッチ条件(prefix-list、AS_PATH フィルタ、コミュニティ等の参照)とアクション(属性の書き換え)を束ねる、番号付きの規則列。番号順に評価し、全 match 句(AND)を満たした最初のエントリで確定する(permit なら set 句を適用して通し、deny なら落とす)。どのエントリにもマッチしなければ暗黙の deny。「route-map」は RFC に登場しない Cisco 由来の実装語彙であり、RFC 4271 が求めるのは「ローカルポリシーによる経路の選別と属性操作」という抽象のみ(Junos の policy-statement 等、表現形式は実装ごとに異なる)。
+- **初出章**: `03_bgp/04_policy_control.md`
+- **関連用語**: prefix-list、コミュニティ、パスアトリビュート
+
 ### RT(Route Target / ルートターゲット)
 
 - **定義**: 経路の取り込み先を決める仕分けラベル(BGP 拡張コミュニティの一種)。各 VRF / MAC-VRF は export RT(広告に付ける)と import RT(一致する経路を取り込む)を持ち、同じ RT を共有する VTEP 群が1つの仮想ネットワークの参加者集合になる。EVPN/VXLAN では「AS 番号:VNI」の自動導出(RFC 8365)が既定のため、AS 番号が揃わない設計では不一致に注意。
-- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(詳細は第3部)
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(拡張コミュニティとしての位置づけは `03_bgp/04_policy_control.md`)
 - **関連RFC**: RFC 4360、RFC 8365
-- **関連用語**: RD、ルートタイプ、EVPN、MAC-VRF
+- **関連用語**: RD、ルートタイプ、EVPN、MAC-VRF、拡張コミュニティ
 - **表記**: 本書では「RT-数字」(RT-2 等)はルートタイプを、単独の「RT」はルートターゲットを指すと使い分ける
 
 ### SPF(Shortest Path First / 最短経路優先計算)
@@ -419,6 +432,13 @@
 - **初出章**: `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`
 - **関連用語**: アンダーレイネットワーク、VXLAN、カプセル化
 
+### 拡張コミュニティ(extended community)
+
+- **定義**: コミュニティを 8 オクテットへ拡張し、先頭に型フィールドを持たせた属性(RFC 4360。型ごとに transitive 性も定義される)。型により構造と意味が機械的に定まる「構造化された荷札」であり、VPN 系機能の基盤になった。RT(ルートターゲット)はその Route Target 型である。
+- **初出章**: `03_bgp/04_policy_control.md`(RT としての利用は `02_vlan_vxlan_evpn/05_evpn_vxlan.md` が先行)
+- **関連RFC**: RFC 4360
+- **関連用語**: コミュニティ、RT、ラージコミュニティ
+
 ### カプセル化(encapsulation)
 
 - **定義**: 上位レイヤのデータを下位レイヤのヘッダで包んで伝送する仕組み。各レイヤは自レイヤのヘッダのみを解釈する。
@@ -446,6 +466,20 @@
 - **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/01_bgp_basics.md` にもあり)
 - **関連RFC**: RFC 4271
 - **関連用語**: パスアトリビュート、LOCAL_PREF、MED、Adj-RIB-In / Loc-RIB / Adj-RIB-Out
+
+### 経路リーク(route leak)
+
+- **定義**: 経路広告が意図した範囲を超えて伝搬すること(RFC 7908 が類型を定義)。典型は、複数の上流を持つ AS が上流 A から学んだ経路を上流 B へ広告してしまい、他人どうしのトラフィックを自腹で運ぶ・細い回線に大量のトラフィックを呼び込む事故。出口での関係タグ(コミュニティ)による選別と、RFC 8212 の既定(eBGP は明示的なポリシーなしに経路を受けず・広告しない)が防御になる。
+- **初出章**: `03_bgp/04_policy_control.md`
+- **関連RFC**: RFC 7908、RFC 8212
+- **関連用語**: コミュニティ、prefix-list、eBGP / iBGP
+
+### コミュニティ(COMMUNITY / BGP community)
+
+- **定義**: 経路に付ける 32 ビット値の荷札の集合(optional transitive 属性、RFC 1997)。表記は上位・下位 16 ビットを区切った「AS:値」が慣例。プロトコルは値の意味を定めず、意味は貼る者と読む者の合意で決まる — 入口で受信の文脈(関係・拠点など)を記録する情報タグと、相手の公開ポリシーに処理を依頼するアクション依頼の2用法がある。例外として動作が世界共通で予約された well-known コミュニティ(NO_EXPORT、NO_ADVERTISE、BLACKHOLE = RFC 7999、GRACEFUL_SHUTDOWN = RFC 8326)がある。
+- **初出章**: `03_bgp/04_policy_control.md`(言及は第2部・`03_bgp/03_path_attributes.md` にもあり)
+- **関連RFC**: RFC 1997、RFC 7999、RFC 8326
+- **関連用語**: パスアトリビュート、拡張コミュニティ、ラージコミュニティ、route-map
 
 ### 再帰的ルックアップ(recursive lookup)
 
@@ -551,7 +585,7 @@
 - **定義**: BGP の UPDATE で NLRI とともに運ばれる経路の付帯情報(TLV 形式)。well-known / optional × transitive / non-transitive の4分類が「未知の属性を受け取ったときの動作」まで規定しており(未知の optional transitive は Partial ビットを立てて中継)、これが BGP の後方互換な拡張性の基盤になっている。経路選択の材料とポリシーの荷札という2つの役割を持つ。
 - **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/01_bgp_basics.md` にもあり)
 - **関連RFC**: RFC 4271
-- **関連用語**: AS_PATH、LOCAL_PREF、MED、ORIGIN、NLRI、経路選択プロセス
+- **関連用語**: AS_PATH、LOCAL_PREF、MED、ORIGIN、NLRI、経路選択プロセス、コミュニティ
 
 ### パスベクタ(path vector)
 
@@ -643,6 +677,13 @@
 - **定義**: 同一ルーティングプロトコル内で経路の優劣を測る値(小さいほど良い)。意味と計算方法はプロトコル固有であり(RIP はホップ数、OSPF はコスト)、プロトコル間では比較できない。
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: 管理距離、ECMP
+
+### ラージコミュニティ(large community)
+
+- **定義**: 4 オクテット × 3(グローバル管理者 = AS 番号:値1:値2)で構成されるコミュニティ(RFC 8092)。32 ビット AS 番号(RFC 6793)が RFC 1997 の「上位 16 ビットに AS 番号」という慣例に収まらない問題への対応で、32 ビット AS 番号を持つ組織が名前空間付きの荷札を使うための形式。
+- **初出章**: `03_bgp/04_policy_control.md`
+- **関連RFC**: RFC 8092、RFC 6793
+- **関連用語**: コミュニティ、拡張コミュニティ
 
 ### リーフ・スパイン(leaf-spine / Clos 網)
 

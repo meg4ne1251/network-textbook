@@ -155,8 +155,8 @@ Ethernet Tag フィールドで区別する VLAN-aware bundle という形態も
 
 RD が「衝突の防止」なら、**RT(Route Target、ルートターゲット)**は
 「**仕分けのラベル**」である。RT は経路に付ける拡張コミュニティ
-(BGP の経路に付けられるタグの一種。詳細は第3部
-(後述: `../03_bgp/04_policy_control.md`)で扱う)で、
+(BGP の経路に付けられるタグの一種。詳細は
+[第3部のポリシー制御の章](../03_bgp/04_policy_control.md) で扱う)で、
 各 VTEP は MAC-VRF ごとに次の2つを設定する。
 
 - **export RT**: この MAC-VRF から広告する経路に、このラベルを付ける

@@ -10,8 +10,8 @@
 
 ## 現在の状態
 
-- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜14(第3部進行中)
-- 次のステップ: Step 15 `03_bgp/04_policy_control.md`(route-map, prefix-list, community)
+- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜15(第3部進行中)
+- 次のステップ: Step 16 `03_bgp/05_mp_bgp.md`(MP-BGP、AFI/SAFI)
 
 ---
 
@@ -396,3 +396,42 @@
   (4) 本章から 04_policy_control・05_mp_bgp・06_large_scale_design への
   「(後述: ...)」参照は該当章の執筆後にリンク化する。
 - 次のステップ: Step 15 `03_bgp/04_policy_control.md` から着手する
+
+## Step 15: `03_bgp/04_policy_control.md` (完了日: 2026-07-06)
+
+- 完了内容: ポリシー制御の章を執筆。ポリシーを「どこで(ピア・方向)・どの経路に
+  (マッチ)・何をするか(アクション)」に分解し、3段 RIB 上の2つの関所
+  (入力/出力ポリシー)と対応付けた。prefix-list(ge/le の2条件 AND の意味論、
+  代表4パターンの表)、AS_PATH 正規表現(`_`・`^$` の最小語彙)、コミュニティ
+  (RFC 1997、情報タグ/アクション依頼の2用法、well-known 5種の表)、
+  拡張コミュニティ(RFC 4360、RT の正体)、ラージコミュニティ(RFC 8092)、
+  route-map(先勝ち+暗黙の deny、受け皿 permit、2層の permit/deny)、
+  RFC 8212(eBGP default deny)と経路リーク(RFC 7908)、ポリシーの再評価
+  (Route Refresh RFC 2918 / soft reconfiguration、01章の伏線回収)、
+  商業関係(顧客/ピア/上流)に基づくポリシーのウォークスルー
+  (入口タグ+出口選別、valley-free、LOCAL_PREF 序列の経済的導出)、
+  GRACEFUL_SHUTDOWN(RFC 8326)と BLACKHOLE(RFC 7999、RTBH)の動作、
+  FRR 設定例(顧客 in / 上流 out)、トラブルシューティング4種
+  (暗黙の deny と RFC 8212、send-community 既定差と第三者の洗い流し、
+  再評価のタイミング、ge/le の解釈ミス)を記載。
+- 決定事項: (1) 表記: 「prefix-list」「route-map」は実装語彙に合わせ英字のまま
+  標準表記とする(glossary に明記)。route-map は RFC に存在しない実装語彙である旨を
+  本文に明記(慣用名ルールの適用)。(2) 章の分担: RPKI / Origin Validation
+  (RFC 6811)は言及のみで本書の範囲外と明示。NO_EXPORT_SUBCONFED は
+  06章への「(後述)」参照。RPSL(RFC 2622)は存在の言及のみ。
+  (3) 「先勝ち+暗黙の deny」を prefix-list / route-map 共通の評価規則として
+  導入し、RFC 8212 の default deny と同じフェイルセーフ原則で括った。
+  (4) 商業関係ポリシー(入口でタグ・出口でタグを見る)を第3部後半
+  (06_large_scale_design)から参照できる実務の基本形として導入。
+  (5) 用語集へ6語登録(prefix-list、route-map、拡張コミュニティ、経路リーク、
+  コミュニティ、ラージコミュニティ)+ RT(初出章欄・関連用語)と
+  パスアトリビュート(関連用語)を更新。(6) 01章・03章・第2部05章の
+  「(後述: 04_policy_control)」参照3箇所をすべてリンク化。
+- 未解決・要検証事項: (1) match 句が参照する prefix-list / community-list が
+  未定義・空の場合の挙動は「実装差がある」とぼかして記載(FRR の現行の
+  正確な挙動は要検証)。(2) FRR のコミュニティ送信の既定(standard / extended /
+  large とも既定送信)はバージョンにより差がありうる。(3) `show bgp ipv4 unicast`
+  の Community 行・best 理由の表示文言は FRR の代表的な形で記載。
+  (4) 本章から 06_large_scale_design への「(後述: ...)」参照
+  (NO_EXPORT_SUBCONFED)は該当章の執筆後にリンク化する。
+- 次のステップ: Step 16 `03_bgp/05_mp_bgp.md` から着手する
