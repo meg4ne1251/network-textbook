@@ -93,11 +93,25 @@
 - **関連RFC**: RFC 826
 - **関連用語**: NDP、デフォルトゲートウェイ
 
+### ARP サプレッション(ARP suppression)
+
+- **定義**: EVPN 環境で、VTEP が事前配布された MAC↔IP の対応(ルートタイプ2で運ばれる)を使い、配下の端末からの ARP 要求へその場で代理応答する機能。ARP ブロードキャストがトンネルに入る前に消えるため、BUM トラフィックの主成分が削減される。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`
+- **関連RFC**: RFC 7432、RFC 9161(Proxy-ARP/ND の運用詳細)
+- **関連用語**: EVPN、BUM トラフィック、ARP
+
 ### EtherType
 
 - **定義**: Ethernetヘッダ内でペイロードの上位プロトコルを示す2オクテットのフィールド。0x0800=IPv4、0x86DD=IPv6、0x0806=ARP、0x8100=VLANタグ。
 - **初出章**: `01_fundamentals/01_l2_l3_recap.md`
 - **関連用語**: カプセル化
+
+### EVPN(Ethernet VPN)
+
+- **定義**: MAC アドレスの所在や VTEP のメンバーシップといった L2 の到達性情報を、MP-BGP の経路情報(AFI 25 = L2VPN / SAFI 70 = EVPN)として配布するコントロールプレーン。本体仕様は RFC 7432(MPLS 網向け)で、RFC 8365 が VXLAN 等のオーバーレイへの適用を定める。所在の事前配布により未知ユニキャストのフラッディングをほぼ解消し、ARP サプレッションと RT-3 によるフラッディングリスト自動構築を実現する。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(詳細は `02_vlan_vxlan_evpn/05_evpn_vxlan.md`)
+- **関連RFC**: RFC 7432、RFC 8365
+- **関連用語**: MP-BGP、VXLAN、VTEP、ヘッドエンドレプリケーション、ARP サプレッション
 
 ## F〜J
 
@@ -112,6 +126,13 @@
 - **定義**: 802.1Q が定める MAC 学習空間の分離方式。IVL は VLAN ごとに独立の学習空間(FID)を割り当て、MAC アドレステーブルのキーが (VLAN, MAC) の組になる。SVL は複数 VLAN で学習空間を共有する。現在のスイッチは原則 IVL で動作し、同一 MAC が VLAN ごとに別ポートで学習されても正常である。
 - **初出章**: `02_vlan_vxlan_evpn/01_vlan_basics.md`
 - **関連用語**: VLAN、透過的ブリッジング
+
+### IGMP(Internet Group Management Protocol)
+
+- **定義**: 受信希望のホストが「このマルチキャストグループのトラフィックが欲しい」と最寄りのルータへ表明(join / leave)するプロトコル。現行版は IGMPv3。VXLAN のマルチキャストモードでは、各 VTEP が VNI 対応グループへの参加表明に使う。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(言及は `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`)
+- **関連RFC**: RFC 3376
+- **関連用語**: PIM、BUM トラフィック、VTEP
 
 ### IGP(Interior Gateway Protocol)
 
@@ -142,6 +163,13 @@
 - **関連RFC**: RFC 2328(OSPFv2)
 - **関連用語**: リンクステート、SPF、フラッディング
 
+### MP-BGP(Multiprotocol BGP)
+
+- **定義**: BGP が IPv4 ユニキャスト経路以外の情報(IPv6 経路、VPN 経路、EVPN の MAC 情報など)を運べるようにする拡張。運ぶ情報の種類をアドレスファミリの番号組(AFI/SAFI)で区別する。EVPN はこの枠組みの1ファミリとして定義されている。詳細は第3部で扱う。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(詳細は `03_bgp/05_mp_bgp.md`)
+- **関連RFC**: RFC 4760
+- **関連用語**: EVPN、ピア、パスベクタ
+
 ### Null ルート(null route / 廃棄経路)
 
 - **定義**: マッチしたパケットを廃棄する経路。経路集約時に集約プレフィックスの「底」として置き、実在しない宛先のパケットがデフォルトルートへ流れてループすることを防ぐ。
@@ -163,6 +191,13 @@
 - **関連用語**: リンクステート、LSA、LSDB、SPF、エリア、DR / BDR、隣接
 
 ## P〜T
+
+### PIM(Protocol Independent Multicast)
+
+- **定義**: マルチキャストの配送木(送信元から全受信希望者へ届く木)をルータ間で構築するマルチキャストルーティングプロトコル。既存のユニキャスト経路表を利用するため protocol independent と呼ばれる。実用の主流は PIM-SM(Sparse Mode)で、RP(Rendezvous Point)と呼ぶ集合点を経由する共有木から始め、送信元への最短経路木へ切り替える。全員が送信者かつ受信者の場合向けに双方向共有木だけで動く PIM-BiDir もある。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`
+- **関連RFC**: RFC 7761(PIM-SM)、RFC 5015(PIM-BiDir)
+- **関連用語**: IGMP、BUM トラフィック
 
 ### PVID(Port VLAN Identifier)
 
@@ -230,7 +265,7 @@
 - **定義**: L3 アンダーレイの上に仮想 L2 セグメント(オーバーレイ)を構築する MAC-in-UDP カプセル化。宛先 UDP ポートは 4789(IANA)、オーバーヘッドは 50 オクテット(外側 IPv4・タグなし時)。外側 UDP 送信元ポートに内側フローのハッシュを載せてアンダーレイの ECMP を活かす。中継網を端末 MAC の学習から解放することで、QinQ が越えられなかった L2 の規模の壁を越える。
 - **初出章**: `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`
 - **関連RFC**: RFC 7348(Informational)
-- **関連用語**: VTEP、VNI、オーバーレイネットワーク、BUM トラフィック、フラッド&ラーン
+- **関連用語**: VTEP、VNI、オーバーレイネットワーク、BUM トラフィック、フラッド&ラーン、EVPN
 
 ## あ〜わ(日本語見出し語)
 
@@ -403,7 +438,7 @@
 - **定義**: RFC 7348 が定める VXLAN のデータプレーン学習方式。デカプセル化時に内側フレームの送信元 MAC と外側 IP の送信元アドレス(送信元 VTEP)の対応を学習し、BUM トラフィックは VNI に対応付けたアンダーレイのマルチキャストグループへ送る。コントロールプレーンを持たない単純さが利点だが、初回の必然的なフラッディングとマルチキャスト運用への依存が限界(EVPN への移行動機)。
 - **初出章**: `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`
 - **関連RFC**: RFC 7348
-- **関連用語**: BUM トラフィック、VTEP、透過的ブリッジング
+- **関連用語**: BUM トラフィック、VTEP、透過的ブリッジング、ヘッドエンドレプリケーション、EVPN
 
 ### フレーム / パケット / セグメント
 
@@ -422,6 +457,12 @@
 - **定義**: ブロードキャストフレーム(およびフラッディング)が届く範囲。ルータ(またはVLAN)で分割される。
 - **初出章**: `01_fundamentals/01_l2_l3_recap.md`
 - **関連用語**: フラッディング、VLAN
+
+### ヘッドエンドレプリケーション(Head-End Replication / HER、ingress replication)
+
+- **定義**: BUM フレームを、入口(head-end)の VTEP が宛先 VTEP の数だけユニキャストで複製して送る方式。アンダーレイからマルチキャストの運用体系を不要にする代わりに、複製コストが送信側 VTEP に集中し、宛先一覧(フラッディングリスト)を別途持つ必要がある。一覧を静的設定する形は静的経路と同じ限界を持ち、EVPN のルートタイプ3で自動構築する形が実務の主流。
+- **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`(言及は `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`)
+- **関連用語**: BUM トラフィック、VTEP、EVPN、フラッド&ラーン
 
 ### ホップバイホップ転送
 
