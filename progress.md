@@ -10,8 +10,8 @@
 
 ## 現在の状態
 
-- 完了ステップ: Step 0, 1, 2, 3, 4, 5, 6(第1部完了)、Step 7, 8, 9, 10, 11(第2部完了)
-- 次のステップ: Step 12 `03_bgp/01_bgp_basics.md`(BGPとは何か、IGPとの違いから開始。第3部開始)
+- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12(第3部開始)
+- 次のステップ: Step 13 `03_bgp/02_ibgp_ebgp.md`(iBGP/eBGP の違い)
 
 ---
 
@@ -296,3 +296,35 @@
   (4) 本章内の第3部への参照3箇所(05_mp_bgp、04_policy_control、
   06_large_scale_design)は「(後述: ...)」形式のため、該当章の執筆後にリンク化する。
 - 次のステップ: Step 12 `03_bgp/01_bgp_basics.md` から着手する(第3部開始)
+
+## Step 12: `03_bgp/01_bgp_basics.md` (完了日: 2026-07-06)
+
+- 完了内容: 第3部の起点となる BGP 基礎の章を執筆(RFC 4271)。IGP を AS 間に
+  持ち出せない3つの理由(信頼・ポリシー・規模)から導入し、BGP の設計を
+  「4つの選択」(① TCP ポート 179 への分業と順序保証、② ピアの明示設定=
+  境界の安全装置、③ AS_PATH によるパスベクタ=第1部04の伏線回収、
+  ④ 差分更新・ハードステートと Route Refresh RFC 2918)として整理。
+  3段の RIB(Adj-RIB-In / Loc-RIB / Adj-RIB-Out)とポリシーの関所、
+  共通ヘッダ・4メッセージ(OPEN のフィールドとケイパビリティ交渉 RFC 5492、
+  AS_TRANS、UPDATE の構造= NLRI と撤回リスト、NOTIFICATION、KEEPALIVE)、
+  FSM 6状態(Active の名前の罠、コリジョン解決)、タイマー(ホールドタイム
+  の min 合意、推奨90秒/実装既定180秒)、セッション確立の Mermaid 図、
+  FRR の最小 eBGP 設定と `show bgp summary` の読み方、トラブルシューティング
+  4種(Active 巡回= TCP 179 疎通、OPEN 拒絶= NOTIFICATION を読む、
+  ネクストホップ解決不能、PMTUD 起因の Hold Timer Expired)を記載。
+- 決定事項: (1) 章の分担: 本章はセッション・メッセージ・FSM という
+  eBGP/iBGP 共通の土台まで。eBGP/iBGP の違い(TTL、スプリットホライズン等)は
+  02章、パスアトリビュートの意味論と Decision Process の各段は 03章、
+  ポリシー制御の道具は 04章に委ねる(本文でその旨を明示)。
+  (2) BGP の経路選択は「メトリック最小化ではなく多段の属性比較+ポリシー」と
+  位置づけ、本章では比較の中身に立ち入らない。(3) eBGP の TTL=1 は
+  トラブルシューティングで言及のみ(詳細は02章)。(4) 用語集へ5語登録
+  (AS_PATH、Adj-RIB-In / Loc-RIB / Adj-RIB-Out、BGP、NLRI、ホールドタイム)+
+  ピア・パスベクタの「詳細は第3部」参照を本章へのリンクに更新。
+- 未解決・要検証事項: (1) ホールドタイムの実装既定値「180秒(KEEPALIVE 60秒)が
+  多い」は代表的実装(FRR、Cisco IOS 等)の慣例として記載(RFC 4271 Section 10 の
+  推奨値は Hold 90s / Keepalive 30s / ConnectRetry 120s)。
+  (2) `show bgp summary` の出力例は FRR の代表的な形(バージョンにより列に微差)。
+  (3) 第2部 05章の「(後述: 第3部)」参照3箇所(05_mp_bgp、04_policy_control、
+  06_large_scale_design)は本章の対象外のため未解消(該当章の執筆時にリンク化)。
+- 次のステップ: Step 13 `03_bgp/02_ibgp_ebgp.md` から着手する
