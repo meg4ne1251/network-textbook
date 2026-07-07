@@ -212,6 +212,13 @@
 
 ## F〜J
 
+### FEC(Forwarding Equivalence Class / 転送等価クラス)
+
+- **定義**: 転送の観点から同じ扱いを受けるパケットの集合(RFC 3031)。IP 転送では各ホップが宛先アドレスから毎回分類し直すのに対し、MPLS では網の入口(LER)が一度だけ分類し、結果をラベルとしてパケットに焼き付ける。FEC は宛先プレフィックスに限らず、「BGP ネクストホップが同じ経路の集合」「特定 VPN 宛て」など入口が識別できるものなら何でもよい — この分類の自由度と一回性が BGP フリーコア・VPN・TE の源泉である。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3031
+- **関連用語**: MPLS、LSP、ロンゲストマッチ
+
 ### FIB(Forwarding Information Base)
 
 - **定義**: RIB の最良経路を転送用に最適化したテーブル。パケット転送(データプレーン)はこれを引いて行われ、再帰的ルックアップの解決結果が展開される。
@@ -281,6 +288,13 @@
 - **関連RFC**: RFC 9135、RFC 8365
 - **関連用語**: VNI、IRB
 
+### LFIB(Label Forwarding Information Base)
+
+- **定義**: LSR が持つラベル転送用のテーブル。「入ラベル → ラベル操作(swap/pop)+送り先」の対応表であり、RFC 3031 の用語では ILM(Incoming Label Map)が対応する(入口 LER 側の「FEC → push」の表は FTN)。IP の FIB と並ぶデータプレーンのテーブルで、中身を書くのはラベル配布のコントロールプレーン(LDP、RSVP-TE、BGP、SR)である。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3031
+- **関連用語**: FIB、MPLS、LSR / LER
+
 ### LOCAL_PREF(Local Preference)
 
 - **定義**: 経路を AS としてどれくらい好むかを表す well-known 属性(4 オクテット、大きいほど優先)。iBGP ピアへの広告には必ず付け、eBGP ピアへは付けない(RFC 4271 Section 5.1.5)— AS の外に出ない、出口選択の意思統一の道具である。経路選択プロセスの最初の比較段であり、AS_PATH 長など他のすべての材料に優先する。既定値 100 は実装慣例(RFC は既定値を定めない)。
@@ -301,6 +315,20 @@
 - **初出章**: `01_fundamentals/04_distance_vector_link_state.md`
 - **関連RFC**: RFC 2328(OSPFv2)
 - **関連用語**: リンクステート、SPF、フラッディング
+
+### LSP(Label Switched Path / ラベルスイッチドパス)
+
+- **定義**: ある FEC のパケットが MPLS 網の入口から出口までたどる、ラベルの張り替え(swap)の連鎖が作る道。ラベルはリンクごとのローカルな合意なので、LSP は「隣接間の約束の連鎖」として成立する。**一方向**であり、往復は別の LSP になる。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3031
+- **関連用語**: MPLS、FEC、LSR / LER
+
+### LSR / LER(Label Switching Router / Label Edge Router)
+
+- **定義**: MPLS 網の2つの役割。LSR は網内部でラベルの swap だけを行うルータ、LER は網の縁でラベルの push(入口 = ingress)/ pop(出口 = egress)を行うルータ。ISP の文脈では LER を PE(Provider Edge)、内部 LSR を P(Provider)、MPLS を関知しない顧客ルータを CE(Customer Edge)と呼ぶ(RFC 4364 由来の慣用)。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3031、RFC 4364
+- **関連用語**: MPLS、LSP、LFIB
 
 ### MAC-VRF
 
@@ -343,6 +371,13 @@
 - **初出章**: `03_bgp/05_mp_bgp.md`(言及は `03_bgp/03_path_attributes.md` にもあり)
 - **関連RFC**: RFC 4760
 - **関連用語**: MP-BGP、AFI / SAFI、NLRI、パスアトリビュート
+
+### MPLS(Multi-Protocol Label Switching)
+
+- **定義**: 網の入口でパケットを FEC に分類して固定長のラベル(4 オクテット: Label 20 / TC 3 / S 1 / TTL 8 ビット)を押し、以後はラベルの張り替えだけで転送する方式(アーキテクチャは RFC 3031、エンコーディングは RFC 3032。Ethernet 上は EtherType 0x8847)。転送の根拠を宛先 IP から切り離せるため、BGP フリーコア・VPN・トラフィックエンジニアリングの基盤になる。ラベルはスタックでき(S ビットが底の印)、「出口まで運ぶトンネルラベル+着後の仕分けを担うサービスラベル」の分業が VPN の骨格。ラベル配布のコントロールプレーンはアーキテクチャから分離されている。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`(言及は第1部・第3部にもあり)
+- **関連RFC**: RFC 3031、RFC 3032
+- **関連用語**: FEC、LSP、LSR / LER、LFIB、PHP、ラベルスタック、カプセル化
 
 ### Null ルート(null route / 廃棄経路)
 
@@ -428,6 +463,13 @@
 - **関連用語**: OSPF、LSA、リンクローカルアドレス、ルータ ID、IPv6
 
 ## P〜T
+
+### PHP(Penultimate Hop Popping)
+
+- **定義**: 出口 LER の1つ手前の LSR がラベルを pop してから渡すことで、出口での 2 回ルックアップ(LFIB → FIB)を 1 回にする最適化。出口 LER が予約ラベル implicit NULL(値 3)を配布することで「剥がしてから送ってくれ」と依頼する。ラベル内の TC(QoS 印)も一緒に消えるため、TC を出口まで届けたい場合は explicit NULL(IPv4 = 0、IPv6 = 2)を使う。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3031、RFC 3032
+- **関連用語**: MPLS、LSR / LER、LFIB
 
 ### PIM(Protocol Independent Multicast)
 
@@ -640,7 +682,7 @@
 - **定義**: 上位レイヤのデータを下位レイヤのヘッダで包んで伝送する仕組み。各レイヤは自レイヤのヘッダのみを解釈する。
 - **初出章**: `01_fundamentals/01_l2_l3_recap.md`
 - **関連RFC**: RFC 1122
-- **関連用語**: EtherType、フレーム/パケット/セグメント
+- **関連用語**: EtherType、フレーム/パケット/セグメント、MPLS
 
 ### 管理距離(Administrative Distance / AD)
 
@@ -929,6 +971,13 @@
 - **初出章**: `03_bgp/04_policy_control.md`
 - **関連RFC**: RFC 8092、RFC 6793
 - **関連用語**: コミュニティ、拡張コミュニティ
+
+### ラベルスタック(label stack)
+
+- **定義**: MPLS ラベルを LIFO で複数積み重ねる仕組み(RFC 3032)。転送は常に先頭(最外)のラベルだけで行われ、S ビット = 1 が底を示す。役割の違うラベルの分業 — 出口 PE まで運ぶトンネルラベル+着後にテナント/サービスを仕分けるサービスラベル — が典型で、MPLS VPN の骨格。VXLAN の「外側 IP(VTEP まで運ぶ)+ VNI(仕分け)」と同型の2層構造である。
+- **初出章**: `05_mpls_srv6/01_mpls_basics.md`
+- **関連RFC**: RFC 3032
+- **関連用語**: MPLS、LSP、VNI
 
 ### リーフ・スパイン(leaf-spine / Clos 網)
 
