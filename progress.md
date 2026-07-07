@@ -11,8 +11,8 @@
 ## 現在の状態
 
 - 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜17(第3部完了)、
-  Step 18〜22(第4部完了)、Step 23〜24
-- 次のステップ: Step 25 `05_mpls_srv6/03_l3vpn_l2vpn.md`(L3VPN, L2VPN)
+  Step 18〜22(第4部完了)、Step 23〜25
+- 次のステップ: Step 26 `05_mpls_srv6/04_srv6.md`(SRv6。最終ステップ)
 
 ---
 
@@ -769,3 +769,43 @@
   データプレーンの絞りはない」は一般論(実装によっては auto-bandwidth や
   ポリサ連動があるが本文では触れていない)。
 - 次のステップ: Step 25 `05_mpls_srv6/03_l3vpn_l2vpn.md` から着手する
+
+## Step 25: `05_mpls_srv6/03_l3vpn_l2vpn.md` (完了日: 2026-07-08)
+
+- 完了内容: MPLS VPN の章を執筆。「専用線の置き換え=1つの共用網に互いに見えない
+  多数の網を」という商売の要求3点(アドレス重複許容/経路分離/コア無関知)から導入し、
+  L3VPN(RFC 4364)を3部品 — VRF(テーブル分離、IVL→MAC-VRF と同系譜)、
+  MP-BGP VPNv4(RD = 一意化・RT = 仕分け、第2部05章の RD/RT の「出生地」種明かし、
+  RT によるハブ&スポーク等のトポロジ制御)、2段ラベル(トンネル+ VPN、
+  対称 IRB の L3VNI は「VPN ラベルの VXLAN 方言」)— として整理。
+  L3VPN vs EVPN/VXLAN の対応表(第2部との橋)、PE-CE(as-override/allowas-in は
+  ノブとして言及)、L2VPN の系譜(疑似回線 = RFC 3985/8077・VPWS →
+  VPLS = RFC 4761/4762・PW フルメッシュ+スプリットホライズン = iBGP と同型 →
+  限界3点 → EVPN は本来 MPLS の技術で RFC 8365 が後、という逆輸入の種明かし)、
+  6PE/6VPE(RFC 4798/4659、IPv4aaS の鏡像)、VPNv4 NLRI の構造図(ラベルは NLRI・
+  RT は属性という置き場所の意味)、経路とパケットのフルウォークスルー
+  (Mermaid + 区間別ラベルスタック表、PHP の実益)、RT Constraint(RFC 4684)、
+  FRR の VRF + vpnv4 設定例、トラブルシューティング4種(RT 不一致 = 層構造の再利用、
+  LSP 断で VPN だけ全滅 = IP は健全という非対称、同一 RD とパスハイディング、
+  ラベル2枚の MTU と PW の MTU 不一致検査)を記載。
+- 決定事項: (1) 表記: 「L3VPN」「VPNv4(VPN-IPv4)」「疑似回線(pseudowire、PW)」
+  「VPLS」「VRF」を標準表記とする。(2) 本章の VPN は経路分離型(事業者 VPN)であり
+  暗号化 VPN(IPsec)は対象外と冒頭で明示。(3) 章の分担: PE-CE ルーティングの詳細
+  (OSPF スーパーバックボーン、SoO 等)、CsC(Carrier's Carrier)、inter-AS
+  オプション A/B/C は扱わない。マルチキャスト VPN(RFC 6513)も対象外。
+  (4) 「知識を縁に寄せ中間を単純に」をエンドツーエンド原則の網内版として位置づけ、
+  第5部の縦糸(状態の置き場所)に接続。(5) EVPN の歴史的順序(VPLS の反省 →
+  EVPN-MPLS → EVPN-VXLAN)を正式に記述し、第2部が「方言から先に学んだ」ことを
+  明示。(6) 用語集へ5語登録(L3VPN、VPLS、VPN-IPv4、VRF、疑似回線)+
+  RD(マルチホームの RD 分離の技法を追記・初出章欄更新)・RT(初出章欄更新)。
+  (7) 第2部05章・第3部05章の「第5部で扱う」参照4箇所と第5部01章の
+  「(後述: 03_l3vpn_l2vpn.md)」2箇所をリンク化。
+- 未解決・要検証事項: (1) VPN ラベルの割当粒度(per-VRF / per-prefix / per-CE)は
+  実装差の話題として本文では per-VRF 相当の挙動を暗黙の前提にした(明示的な比較は
+  していない)。(2) FRR の L3VPN 設定(`label vpn export auto`、`rd vpn export` 等)は
+  比較的新しい体系でバージョン差がありうる。(3) 「多くの実装はネクストホップが
+  ラベル付き経路で解決できない VPN 経路を無効扱いにする」は代表的挙動
+  (nexthop validation の細部は実装差が大きい)。(4) RFC 4684(RT Constraint)の
+  SAFI 値 132 は要再確認(本文には数値を記載)。(5) VPWS の EVPN 版(EVPN-VPWS、
+  RFC 8214)には触れていない。
+- 次のステップ: Step 26 `05_mpls_srv6/04_srv6.md` から着手する(最終ステップ)

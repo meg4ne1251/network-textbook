@@ -127,7 +127,7 @@ RT-5 が本章で扱う「L3 への拡張」、RT-1/RT-4 が「冗長化」**で
 RFC 7432 は、VTEP(仕様の用語では PE)がテナントごとに持つ独立の
 MAC テーブルを **MAC-VRF** と呼ぶ(VRF = Virtual Routing and Forwarding は
 もともと L3VPN でルーティングテーブルを顧客ごとに分ける仕組みの呼称で、
-その MAC 版である。L3VPN は第5部で扱う)。VXLAN では実用上、
+その MAC 版である。L3VPN は [第5部](../05_mpls_srv6/03_l3vpn_l2vpn.md) で扱う)。VXLAN では実用上、
 **1つの VNI が1つのブロードキャストドメイン**に対応し、MAC-VRF は
 1つ以上の VNI を束ねるテナント単位の入れ物になる
 (1 MAC-VRF = 1 VNI の最も単純な形を **VLAN-based サービス**と呼ぶ。

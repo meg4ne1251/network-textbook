@@ -302,6 +302,13 @@
 - **関連RFC**: RFC 9135、RFC 8365
 - **関連用語**: VNI、IRB
 
+### L3VPN(BGP/MPLS IP VPN)
+
+- **定義**: 事業者の共用 MPLS 網の上に、顧客ごとに分離された仮想の IP 網を多数作るサービスの標準(RFC 4364。旧 RFC 2547)。3部品から成る — VRF(PE 上の顧客別テーブル)、MP-BGP VPN-IPv4 ファミリ(RD で一意化・RT で仕分けた経路配布)、2段ラベル(出口 PE まで運ぶトンネルラベル+着後に VRF を仕分ける VPN ラベル)。コアの P ルータは顧客経路を一切持たない。EVPN/VXLAN のマルチテナンシーはこの道具立ての DC 方言。IPv6 版は 6VPE(RFC 4659)。
+- **初出章**: `05_mpls_srv6/03_l3vpn_l2vpn.md`(言及は第2部・第3部にもあり)
+- **関連RFC**: RFC 4364、RFC 4659
+- **関連用語**: VRF、RD、RT、MP-BGP、ラベルスタック、EVPN
+
 ### LDP(Label Distribution Protocol)
 
 - **定義**: IGP の最短経路に沿った LSP を全 FEC について自動的に作る、MPLS の基本のラベル配布プロトコル(RFC 5036)。UDP 646 のマルチキャスト Hello で隣人を発見し、TCP 646 のセッション(transport address = ループバックどうし)でラベルを交換する。経路は一切決めず IGP に従属する。フレームモードの定番は DU + liberal retention + independent 制御(メモリを使って収束を速くする)。IGP との収束のずれが生む穴は LDP-IGP 同期(RFC 5443)で塞ぐ。
@@ -521,8 +528,8 @@
 
 ### RD(Route Distinguisher / ルート識別子)
 
-- **定義**: MP-BGP で運ぶ経路の先頭に付ける 8 オクテットの値。テナントごとのテーブルから出た「同じ中身」の経路(同一 MAC・同一プレフィックス)を BGP 上で別経路として共存させるための一意化の接頭辞であり、それ自体に仕分けの意味はない(仕分けは RT が担う)。実装は「VTEP アドレス:内部番号」等の形式で自動生成することが多い。
-- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(詳細は第3部・第5部)
+- **定義**: MP-BGP で運ぶ経路の先頭に付ける 8 オクテットの値。テナントごとのテーブルから出た「同じ中身」の経路(同一 MAC・同一プレフィックス)を BGP 上で別経路として共存させるための一意化の接頭辞であり、それ自体に仕分けの意味はない(仕分けは RT が担う)。実装は「VTEP アドレス:内部番号」等の形式で自動生成することが多い。マルチホーム構成では PE ごとに RD を変えることで、同一プレフィックスの複数広告を意図的に別経路として運ばせ、ルートリフレクタのパスハイディングを回避できる。
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(本来の文脈 = L3VPN は `05_mpls_srv6/03_l3vpn_l2vpn.md`)
 - **関連RFC**: RFC 4364、RFC 7432
 - **関連用語**: RT、MP-BGP、MAC-VRF
 
@@ -555,7 +562,7 @@
 ### RT(Route Target / ルートターゲット)
 
 - **定義**: 経路の取り込み先を決める仕分けラベル(BGP 拡張コミュニティの一種)。各 VRF / MAC-VRF は export RT(広告に付ける)と import RT(一致する経路を取り込む)を持ち、同じ RT を共有する VTEP 群が1つの仮想ネットワークの参加者集合になる。EVPN/VXLAN では「AS 番号:VNI」の自動導出(RFC 8365)が既定のため、AS 番号が揃わない設計では不一致に注意。
-- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(拡張コミュニティとしての位置づけは `03_bgp/04_policy_control.md`)
+- **初出章**: `02_vlan_vxlan_evpn/05_evpn_vxlan.md`(拡張コミュニティとしての位置づけは `03_bgp/04_policy_control.md`、本来の文脈 = L3VPN は `05_mpls_srv6/03_l3vpn_l2vpn.md`)
 - **関連RFC**: RFC 4360、RFC 8365
 - **関連用語**: RD、ルートタイプ、EVPN、MAC-VRF、拡張コミュニティ
 - **表記**: 本書では「RT-数字」(RT-2 等)はルートタイプを、単独の「RT」はルートターゲットを指すと使い分ける
@@ -615,6 +622,27 @@
 - **初出章**: `02_vlan_vxlan_evpn/03_vxlan_fundamentals.md`
 - **関連RFC**: RFC 7348
 - **関連用語**: VXLAN、VTEP、VLAN
+
+### VPLS(Virtual Private LAN Service)
+
+- **定義**: MPLS 網の上で複数拠点を1つの LAN のように見せるマルチポイント L2VPN(BGP シグナリング = RFC 4761、LDP シグナリング = RFC 4762)。PE が顧客ごとの仮想スイッチ(VSI)を持ち、拠点間を疑似回線のフルメッシュで結び、「PW から学んだフレームは他の PW へ流さない」スプリットホライズン規則でループを防ぐ。データプレーンはフラッド&ラーンのままで、PW フルメッシュの N² とマルチホーミングの弱さが限界となり、EVPN(RFC 7432)に置き換えられていった。
+- **初出章**: `05_mpls_srv6/03_l3vpn_l2vpn.md`
+- **関連RFC**: RFC 4761、RFC 4762
+- **関連用語**: 疑似回線、EVPN、フラッド&ラーン、スプリットホライズン
+
+### VPN-IPv4(VPNv4 / VPN-IPv4 アドレスファミリ)
+
+- **定義**: L3VPN の顧客経路を運ぶ MP-BGP のアドレスファミリ(AFI 1 / SAFI 128)。NLRI は「VPN ラベル+ RD(8 オクテット)+ IPv4 プレフィックス」で構成され、RD が違えば同じプレフィックスでも別経路として共存する。仕分け先を示す RT は拡張コミュニティとして属性側に載る。IPv6 版は VPN-IPv6(AFI 2 / SAFI 128、6VPE)。
+- **初出章**: `05_mpls_srv6/03_l3vpn_l2vpn.md`(位置づけの言及は `03_bgp/05_mp_bgp.md` が先行)
+- **関連RFC**: RFC 4364
+- **関連用語**: L3VPN、RD、RT、MP-BGP、AFI / SAFI
+
+### VRF(Virtual Routing and Forwarding)
+
+- **定義**: 1台のルータ(PE)の中に作る、顧客/テナントごとの独立したルーティングテーブル(RIB/FIB の組)。インタフェースを VRF に所属させると、そこから入ったパケットの経路検索はその VRF のテーブルだけで行われる。テーブルが別なのでアドレスの重複が衝突せず、グローバルテーブル(自網・インターネット)とも分離される。EVPN の MAC-VRF はこの L2 版、IP-VRF は同じ概念の DC での呼称。
+- **初出章**: `05_mpls_srv6/03_l3vpn_l2vpn.md`(MAC-VRF としての言及は `02_vlan_vxlan_evpn/05_evpn_vxlan.md` が先行)
+- **関連RFC**: RFC 4364
+- **関連用語**: L3VPN、MAC-VRF、RD、RT、RIB
 
 ### VTEP(VXLAN Tunnel End Point)
 
@@ -717,6 +745,13 @@
 - **定義**: 同一プレフィックスへの経路を複数の情報源が主張するとき、どれを RIB に載せるかを決める「情報源の信頼度」。小さいほど優先。RFC 標準ではなくベンダー実装上の慣例(Juniper では route preference)。
 - **初出章**: `01_fundamentals/02_routing_table_basics.md`
 - **関連用語**: メトリック、RIB
+
+### 疑似回線(pseudowire / PW)
+
+- **定義**: パケット交換網(PSN)の上に点対点の仮想回線をエミュレートする枠組み(アーキテクチャは RFC 3985)。MPLS 上では L2 フレームをまるごと2段ラベル(トンネルラベル+ PW ラベル)で包んで運び、PW ラベルの交換には targeted LDP を使う(RFC 8077、旧 RFC 4447)。Ethernet に限らず ATM・TDM 等のレガシー回線も運べる。点対点サービスとしては VPWS と呼ばれ、フルメッシュに束ねたマルチポイント版が VPLS。両端の MTU 不一致はシグナリングで検出され PW が確立しない。
+- **初出章**: `05_mpls_srv6/03_l3vpn_l2vpn.md`
+- **関連RFC**: RFC 3985、RFC 8077
+- **関連用語**: VPLS、LDP、ラベルスタック、カプセル化
 
 ### ケイパビリティ広告(capability advertisement)
 
