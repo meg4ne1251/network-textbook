@@ -10,8 +10,8 @@
 
 ## 現在の状態
 
-- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜16(第3部進行中)
-- 次のステップ: Step 17 `03_bgp/06_large_scale_design.md`(route reflector、confederation)
+- 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜17(第3部完了)
+- 次のステップ: Step 18 `04_ipv6/01_why_ipv6.md`(IPv4枯渇問題からの導入、第4部開始)
 
 ---
 
@@ -473,3 +473,38 @@
   (条文の正確な文言は要再確認。AGGREGATOR は拡張不要とした整理も RFC の
   趣旨に基づく本書の言い換え)。
 - 次のステップ: Step 17 `03_bgp/06_large_scale_design.md` から着手する
+
+## Step 17: `03_bgp/06_large_scale_design.md` (完了日: 2026-07-07)
+
+- 完了内容: 大規模設計の章を執筆(第3部完結)。iBGP フルメッシュの n(n-1)/2 の破綻から、
+  「再広告禁止=ループ防止だから、緩めるなら代替のループ検出が要る」→ 2つの解はどちらも
+  パスベクタ原理の AS 内への再輸入、という軸で構成。ルートリフレクタ(RFC 4456、反射3規則、
+  クライアント無改造による漸進導入、ORIGINATOR_ID/CLUSTER_LIST、経路選択への2つの修正、
+  パスハイディング=経路多様性喪失+ホットポテトの歪みと ADD-PATH RFC 7911 言及、
+  冗長 RR とクラスタ ID の2流儀、階層化)、コンフェデレーション(RFC 5065、
+  AS_CONFED_SEQUENCE/SET、LOCAL_PREF/NEXT_HOP/MED 保持、パス長に数えない、境界での除去、
+  NO_EXPORT_SUBCONFED の伏線回収)、RR vs confed 比較表、DC 設計(RFC 7938 の eBGP
+  アンダーレイ=Step 10〜11 からの持ち越し解消、EVPN ファブリックの「IGP + ループバック間
+  iBGP + スパイン RR」定石とその理由3点)、反射のウォークスルー(区間別属性変化表)、
+  confed の AS_PATH 変化図、FRR のスパイン RR 設定例(EVPN ファミリでの
+  route-reflector-client)、トラブルシューティング4種(client 指定漏れ・ファミリ別指定、
+  クラスタ ID 共有による破棄、パスハイディング、confed の NEXT_HOP 解決不能)を記載。
+- 決定事項: (1) 表記: 「ルートリフレクタ」「コンフェデレーション」「メンバー AS」
+  (サブ AS を併記)、「反射」(reflect の訳語)、「パスハイディング」を標準表記とする。
+  (2) 実務の推奨として「新規設計は RR」「EVPN ファブリックは iBGP + スパイン RR を基本形」
+  「冗長 RR のクラスタ ID は既定(個別)のまま」を本書の立場として明示。
+  (3) ADD-PATH(RFC 7911)・全 eBGP ファブリック(next-hop-unchanged)は存在の言及のみ。
+  (4) multipath relax は RFC 外の実装慣例と明記(管理距離・Weight と同じ扱いのルール)。
+  (5) 用語集へ3語登録(ORIGINATOR_ID / CLUSTER_LIST、コンフェデレーション、
+  ルートリフレクタ)+ フルメッシュ・経路選択プロセスの関連用語を更新。
+  (6) 「後述: 06_large_scale_design」参照5箇所(02章2、03章1、04章1、第2部05章1)を
+  すべてリンク化(第2部05章の第3部への未解消参照はこれで完了)。
+- 未解決・要検証事項: (1) RFC 4456 Section 9 の経路選択修正の挿入位置は
+  「BGP Identifier 比較の直後(ピアアドレス比較の前)」と記載したが、条文の
+  Step f)/g) との正確な対応は要再確認。(2) 冗長 RR のクラスタ ID を「個別のままが
+  現代の一般的推奨」とした記述はベンダーの設計ガイド類に基づく慣例であり、RFC の
+  規定ではない。(3) FRR の `Originator:` / `Cluster list:` の表示・EVPN での
+  route-reflector-client の設定体系はバージョンにより微差がありうる。
+  (4) RFC 7938 のスパイン層 AS 番号共有・multipath relax の記述は要旨の整理であり、
+  条文の細部(ASN 割り当てスキームの選択肢)は簡略化している。
+- 次のステップ: Step 18 `04_ipv6/01_why_ipv6.md` から着手する(第4部開始)

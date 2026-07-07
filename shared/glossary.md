@@ -294,6 +294,13 @@
 - **関連RFC**: RFC 4271、RFC 4760
 - **関連用語**: BGP、MP-BGP、ルートタイプ
 
+### ORIGINATOR_ID / CLUSTER_LIST
+
+- **定義**: ルートリフレクタ環境で AS 内のループを検出する2つのパスアトリビュート(Type 9 / 10、いずれも optional non-transitive)。ORIGINATOR_ID は経路を AS 内に持ち込んだ発信者の BGP Identifier(最初に反射する RR が付与)、CLUSTER_LIST は経路が通ってきたクラスタ ID の列(RR が反射のたびに自 ID を前置)。自分の ID を見つけた者が経路を無視する — AS_PATH と同じパスベクタの原理を AS 内部で再演する仕組みである。経路選択では BGP Identifier の比較に ORIGINATOR_ID を代用し、CLUSTER_LIST の短い経路を優先する段が加わる。
+- **初出章**: `03_bgp/06_large_scale_design.md`(言及は `03_bgp/03_path_attributes.md` にもあり)
+- **関連RFC**: RFC 4456
+- **関連用語**: ルートリフレクタ、AS_PATH、パスベクタ、パスアトリビュート
+
 ### ORIGIN
 
 - **定義**: 経路情報が最初に BGP に入ったときの由来を示す well-known mandatory 属性。IGP(0、network 文などによる明示的な注入)、EGP(1、旧 EGP プロトコル由来の歴史的値)、INCOMPLETE(2、再配送が典型)の3値で、経路選択では値の小さいほうが好まれる。
@@ -483,10 +490,10 @@
 
 ### 経路選択プロセス(Decision Process)
 
-- **定義**: BGP スピーカーが同一プレフィックスへの複数の経路から Loc-RIB に載せる1本を決める手続き(RFC 4271 Section 9.1)。単一メトリックの最小化ではなく、LOCAL_PREF → AS_PATH 長 → ORIGIN → MED → eBGP/iBGP → ネクストホップへの IGP コスト → BGP Identifier という多段の属性比較で、差がついた段で終了する。管理者はポリシーで属性を書き換えることにより判定結果を操作する。Weight や「古い経路の優先」は RFC 外の実装慣例。
+- **定義**: BGP スピーカーが同一プレフィックスへの複数の経路から Loc-RIB に載せる1本を決める手続き(RFC 4271 Section 9.1)。単一メトリックの最小化ではなく、LOCAL_PREF → AS_PATH 長 → ORIGIN → MED → eBGP/iBGP → ネクストホップへの IGP コスト → BGP Identifier という多段の属性比較で、差がついた段で終了する。管理者はポリシーで属性を書き換えることにより判定結果を操作する。Weight や「古い経路の優先」は RFC 外の実装慣例。ルートリフレクタ環境では終盤に修正が入る(ORIGINATOR_ID の代用と CLUSTER_LIST 長比較、RFC 4456)。
 - **初出章**: `03_bgp/03_path_attributes.md`(言及は `03_bgp/01_bgp_basics.md` にもあり)
 - **関連RFC**: RFC 4271
-- **関連用語**: パスアトリビュート、LOCAL_PREF、MED、Adj-RIB-In / Loc-RIB / Adj-RIB-Out
+- **関連用語**: パスアトリビュート、LOCAL_PREF、MED、Adj-RIB-In / Loc-RIB / Adj-RIB-Out、ORIGINATOR_ID / CLUSTER_LIST
 
 ### 経路リーク(route leak)
 
@@ -501,6 +508,13 @@
 - **初出章**: `03_bgp/04_policy_control.md`(言及は第2部・`03_bgp/03_path_attributes.md` にもあり)
 - **関連RFC**: RFC 1997、RFC 7999、RFC 8326
 - **関連用語**: パスアトリビュート、拡張コミュニティ、ラージコミュニティ、route-map
+
+### コンフェデレーション(confederation / BGP コンフェデレーション)
+
+- **定義**: iBGP フルメッシュの規模問題への解の一つ(RFC 5065)。AS を内部専用の AS 番号を持つ複数のメンバー AS に分割し、メンバー AS 内は iBGP、メンバー AS 間は eBGP の変種(confederation eBGP)で接続する。メンバー AS 境界では AS_CONFED_SEQUENCE でループを検出しつつ、LOCAL_PREF・NEXT_HOP・MED は変更せずに運び、パス長比較でも数えない。真の AS 境界で内部セグメントはすべて取り除かれ、外部からは単一の AS に見える。導入が全ルータに及ぶため、実務ではルートリフレクタが主流。
+- **初出章**: `03_bgp/06_large_scale_design.md`(言及は `03_bgp/02_ibgp_ebgp.md` にもあり)
+- **関連RFC**: RFC 5065
+- **関連用語**: フルメッシュ、ルートリフレクタ、AS_PATH、eBGP / iBGP
 
 ### 再帰的ルックアップ(recursive lookup)
 
@@ -646,7 +660,7 @@
 - **定義**: AS 内のすべての iBGP スピーカーが互いに直接ピアを張る構成(n 台で n(n-1)/2 セッション)。iBGP から学んだ経路を iBGP へ再広告できない規則の下で全員に経路を行き渡らせるための原則形。物理リンクではなく TCP セッションの網であり、規模とともに設定・運用が2乗で破綻するため、大規模ではルートリフレクタまたはコンフェデレーションで緩和する。
 - **初出章**: `03_bgp/02_ibgp_ebgp.md`
 - **関連RFC**: RFC 4271、RFC 4456(ルートリフレクタ)、RFC 5065(コンフェデレーション)
-- **関連用語**: eBGP / iBGP、ピア
+- **関連用語**: eBGP / iBGP、ピア、ルートリフレクタ、コンフェデレーション
 
 ### フレーム / パケット / セグメント
 
@@ -740,6 +754,13 @@
 - **関連RFC**: RFC 7432、RFC 9136
 - **関連用語**: EVPN、RT
 - **表記**: 「RT-数字」と略記する(単独の「RT」はルートターゲットを指す)
+
+### ルートリフレクタ(route reflector / RR)
+
+- **定義**: iBGP の再広告禁止規則に例外を開け、iBGP から学んだ経路を iBGP へ再広告(反射)できる指定ルータ(RFC 4456)。反射してもらうルータをクライアント、RR と配下のクライアントの集合をクラスタと呼ぶ。ループは ORIGINATOR_ID / CLUSTER_LIST で検出する。クライアント側は無改造でよく漸進導入が容易なため、フルメッシュ緩和の実務の主流。反射では NEXT_HOP 等の属性を変更しないため、RR 自身はデータパス上にいなくてよい(EVPN ファブリックのスパイン RR が典型)。代償として、RR が選んだ最良1本しか配らないことによる経路多様性の喪失と出口選択の歪み(パスハイディング)がある(緩和は ADD-PATH、RFC 7911)。
+- **初出章**: `03_bgp/06_large_scale_design.md`(言及は `03_bgp/02_ibgp_ebgp.md`・第2部にもあり)
+- **関連RFC**: RFC 4456
+- **関連用語**: フルメッシュ、ORIGINATOR_ID / CLUSTER_LIST、コンフェデレーション、eBGP / iBGP
 
 ### ロンゲストマッチ(longest prefix match)
 

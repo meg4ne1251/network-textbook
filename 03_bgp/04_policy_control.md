@@ -153,7 +153,7 @@ prefix-list も AS_PATH フィルタも、経路が**もともと持っている
 |---|---|---|
 | NO_EXPORT | 0xFFFFFF01 | この経路を **eBGP ピアへ広告しない**(AS の外に出さない) |
 | NO_ADVERTISE | 0xFFFFFF02 | この経路を**誰にも広告しない** |
-| NO_EXPORT_SUBCONFED | 0xFFFFFF03 | NO_EXPORT のコンフェデレーション版(後述: `06_large_scale_design.md`) |
+| NO_EXPORT_SUBCONFED | 0xFFFFFF03 | NO_EXPORT のコンフェデレーション版([06 章](06_large_scale_design.md)) |
 | GRACEFUL_SHUTDOWN | 0xFFFF0000 | 経路の優先度を最低(LOCAL_PREF 0)にする(**RFC 8326**) |
 | BLACKHOLE | 0xFFFF029A | この宛先へのトラフィックを**廃棄する**(**RFC 7999**) |
 
