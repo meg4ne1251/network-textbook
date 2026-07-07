@@ -183,7 +183,7 @@ RDNSS / DNSSL オプション(RFC 8106)で広告でき、SLAAC だけで
 複数アドレスの原則はここでも前提である)。
 なお DHCPv6 にはプレフィックス委任(DHCPv6-PD)という
 「ルータへサブネット単位でプレフィックスを貸す」重要な用途があり、
-これは(後述: `05_transition_technologies.md`)で再登場する。
+これは[05章](05_transition_technologies.md)で再登場する。
 
 ## プロトコル動作の詳細
 
