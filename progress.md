@@ -11,8 +11,8 @@
 ## 現在の状態
 
 - 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜17(第3部完了)、
-  Step 18〜22(第4部完了)、Step 23
-- 次のステップ: Step 24 `05_mpls_srv6/02_ldp_rsvp_te.md`(LDP, RSVP-TE)
+  Step 18〜22(第4部完了)、Step 23〜24
+- 次のステップ: Step 25 `05_mpls_srv6/03_l3vpn_l2vpn.md`(L3VPN, L2VPN)
 
 ---
 
@@ -729,3 +729,43 @@
   RFC 6790。必要なら 02章の ECMP の文脈で補う)。(4) 「MPLS にはフラグメンテーション
   機構がない」は正確には「ラベル層には無い(中身の IP 層に委ねる)」の意。
 - 次のステップ: Step 24 `05_mpls_srv6/02_ldp_rsvp_te.md` から着手する
+
+## Step 24: `05_mpls_srv6/02_ldp_rsvp_te.md` (完了日: 2026-07-08)
+
+- 完了内容: LDP と RSVP-TE の章を執筆。「問い A: 基本の道に自動でラベルを(LDP)/
+  問い B: IGP が選ばない道を意図的に(RSVP-TE)」の2部構成。LDP(RFC 5036)は
+  「経路を決めないプロトコル = IGP への従属」を軸に、発見(UDP 646)とセッション
+  (TCP 646、transport address)、配布3軸(DU/liberal/independent が定番 =
+  「メモリを使って収束を速く」、第1部04章の伝搬と計算の分離に接続)、LDP-IGP 同期
+  (RFC 5443、復旧時にだけ壊れる障害)。RSVP-TE(RFC 3209)は fish problem による
+  TE の動機づけ、部品3点(IGP TE 拡張 RFC 3630/5305 = 資源つき地図、CSPF =
+  入口の意思・ソースルーティングの復権、PATH/RESV = ERO と下流からのラベル)、
+  ソフトステート(RFC 2961 言及)と N² の状態問題(第3部06章のフルメッシュの再演)、
+  帯域予約 = 帳簿(自己申告)の指摘、「張る」と「載せる」の区別(autoroute)、
+  FRR(RFC 4090、PLR のローカル修復、FRRouting との略称衝突を明記)、比較表と
+  SR への動機(状態をパケットへ)、LDP メッセージ表・セッション確立と配布の
+  Mermaid 図(前章の天下りラベルの出所を完成)、RSVP-TE シグナリングの Mermaid 図、
+  strict/loose ERO、FRRouting ldpd 設定例(`show mpls ldp binding` の Local/Remote/
+  In Use の読み方 = liberal retention の可視化)、トラブルシューティング4種
+  (LDP-IGP 同期欠如、transport address 不到達 = update-source 漏れと同型、
+  CSPF no path = TE 地図の欠け・帳簿満杯、LSP up なのに乗らない = FIB の結線)を記載。
+- 決定事項: (1) 表記: 「LDP-IGP 同期」「CSPF」「ERO」「ヘッドエンド/テール」
+  「ソフトステート」を標準表記とする。高速迂回は FRRouting と衝突するため
+  「FRR(RFC 4090)」と RFC 番号併記で書き分ける(glossary にも明記)。
+  (2) 章の分担: LDP の細部(セッション保護、graceful restart)、RSVP-TE の
+  オブジェクト形式の網羅には立ち入らない。FRR(RFC 4090)は思想(事前計算+
+  ローカル修復)までとし、TI-LFA は 04章に委ねる。DiffServ-TE・帯域の
+  優先度/プリエンプションは扱わない。(3) 「状態の置き場所」(第4部05章の設計軸)を
+  第5部の背骨として再使用することを明示(SR への伏線)。(4) mLDP・RSVP の
+  IntServ 時代の経緯は一言のみ。(5) 用語集へ6語登録(CSPF、Fast Reroute、LDP、
+  RSVP-TE、ソフトステート、トラフィックエンジニアリング)。(6) 01章の
+  「(後述: 02_ldp_rsvp_te.md)」参照をリンク化。
+- 未解決・要検証事項: (1) LDP セッションの能動側の決定(transport address の
+  大小比較)は RFC 5036 Section 2.5.2 の要旨であり、条文の正確な表現は要再確認。
+  (2) RSVP のリフレッシュ既定 30 秒は RFC 2205 の R = 30s に基づく(実装の既定は
+  異なりうる)。(3) FRRouting の ldpd 設定・show 出力はバージョンにより微差がありうる
+  (`discovery transport-address` の体系は代表的な形)。(4) OSPF の LDP 同期
+  コマンド名(`mpls ldp-sync`)は FRR の実装に基づく。(5) 「RSVP-TE の帯域に
+  データプレーンの絞りはない」は一般論(実装によっては auto-bandwidth や
+  ポリサ連動があるが本文では触れていない)。
+- 次のステップ: Step 25 `05_mpls_srv6/03_l3vpn_l2vpn.md` から着手する
