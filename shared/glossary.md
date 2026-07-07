@@ -239,10 +239,10 @@
 
 ### IS-IS(Intermediate System to Intermediate System)
 
-- **定義**: リンクステート型 IGP の一つ。OSPF とアルゴリズムはほぼ同型だが、IP ではなく L2 上で直接動作し、情報を TLV 形式で運ぶため拡張が容易。大規模 ISP・データセンターで広く使われる。
+- **定義**: リンクステート型 IGP の一つ。OSPF とアルゴリズムはほぼ同型だが、IP ではなく L2 上で直接動作し、情報を TLV 形式で運ぶため拡張が容易。IPv6 対応も TLV の追加だけで行われた(RFC 5308。OSPF が OSPFv3 を新造したのと対照的)。大規模 ISP・データセンターで広く使われる。
 - **初出章**: `01_fundamentals/04_distance_vector_link_state.md`(位置づけは `01_fundamentals/05_igp_overview.md`)
-- **関連RFC**: ISO/IEC 10589、RFC 1195
-- **関連用語**: OSPF、リンクステート、LSDB
+- **関連RFC**: ISO/IEC 10589、RFC 1195、RFC 5308
+- **関連用語**: OSPF、リンクステート、LSDB、マルチトポロジ
 
 ## K〜O
 
@@ -320,7 +320,7 @@
 - **定義**: あるリンクで一度に送信できるL3パケットの最大サイズ(オクテット)。標準Ethernetでは1500。
 - **初出章**: `01_fundamentals/01_l2_l3_recap.md`
 - **関連RFC**: RFC 1191(Path MTU Discovery)
-- **関連用語**: フラグメンテーション
+- **関連用語**: フラグメンテーション、PMTUD
 
 ### NAT(Network Address Translation / NAPT)
 
@@ -376,7 +376,14 @@
 - **定義**: リンクステート型 IGP の代表。IP プロトコル番号 89 で直接動作し、Hello によるネイバー自動発見、DR/BDR による隣接の削減、エリアによる LSDB の分割・要約を備える。OSPFv2(IPv4)は RFC 2328、OSPFv3(IPv6)は RFC 5340。
 - **初出章**: `01_fundamentals/05_igp_overview.md`(言及は 03〜04 章にもあり)
 - **関連RFC**: RFC 2328、RFC 5340
-- **関連用語**: リンクステート、LSA、LSDB、SPF、エリア、DR / BDR、隣接
+- **関連用語**: リンクステート、LSA、LSDB、SPF、エリア、DR / BDR、隣接、OSPFv3
+
+### OSPFv3(OSPF version 3)
+
+- **定義**: IPv6 に対応するために新造された OSPF の版(RFC 5340)。OSPFv2 とは互換性のない別プロトコルで、デュアルスタックでは両者を並走させる。設計の主題は「プロトコル処理からアドレス意味論を取り除く」こと — 足回りはリンクローカル(送信元は常にリンクローカル、宛先 ff02::5 / ff02::6)、ネイバー識別は常に 32 ビットのルータ ID、参加はサブネットではなくリンク単位(Instance ID により1リンク複数インスタンスも可)。Router/Network-LSA からプレフィックスを排除してトポロジ専用とし、アドレス情報は新設の Link-LSA(リンクスコープ)と Intra-Area-Prefix-LSA(エリアスコープ)へ分離したため、アドレスの追加・削除が SPF 再計算に波及しない。認証はプロトコル外(IPsec または Authentication Trailer = RFC 7166)。RFC 5838 により IPv4 ファミリも運べる。
+- **初出章**: `04_ipv6/04_routing_ipv6.md`(言及は `01_fundamentals/05_igp_overview.md` が先行)
+- **関連RFC**: RFC 5340、RFC 7166、RFC 5838
+- **関連用語**: OSPF、LSA、リンクローカルアドレス、ルータ ID、IPv6
 
 ## P〜T
 
@@ -386,6 +393,13 @@
 - **初出章**: `02_vlan_vxlan_evpn/04_vxlan_control_plane.md`
 - **関連RFC**: RFC 7761(PIM-SM)、RFC 5015(PIM-BiDir)
 - **関連用語**: IGMP、BUM トラフィック
+
+### PMTUD(Path MTU Discovery / 経路 MTU 探索)
+
+- **定義**: 送信元が宛先までの経路上の最小 MTU を学習し、そのサイズに収めてパケットを送る仕組み(IPv4 = RFC 1191、IPv6 = RFC 8201)。経路上のルータが「大きすぎて転送できない」ときに返すエラー(IPv4 は Fragmentation Needed、IPv6 は ICMPv6 Packet Too Big = Type 2)への依存が本質。経路上フラグメンテーションを廃止した IPv6 では事実上必須であり、Packet Too Big をフィルタしてはならない(RFC 4890)。エラーが途中で落とされると「小さいパケットは通るのに大きいパケットだけ黙って消える」PMTUD ブラックホールになる。
+- **初出章**: `04_ipv6/04_routing_ipv6.md`(言及は `01_fundamentals/01_l2_l3_recap.md`・`04_ipv6/01_why_ipv6.md` が先行)
+- **関連RFC**: RFC 8201、RFC 1191、RFC 4890
+- **関連用語**: MTU、IPv6、フラグメンテーション
 
 ### prefix-list(プレフィックスリスト)
 
@@ -839,6 +853,13 @@
 - **初出章**: `01_fundamentals/01_l2_l3_recap.md`
 - **関連RFC**: RFC 1812
 - **関連用語**: ロンゲストマッチ、TTL
+
+### マルチトポロジ(multi-topology / MT)
+
+- **定義**: 1つの IS-IS の中でアドレスファミリ(トポロジ)ごとに独立のリンク集合と SPF 計算を持たせる拡張(RFC 5120)。素朴に IPv6 用 TLV を足しただけのシングルトポロジ構成では IPv4 と IPv6 が同一の最短経路木を共有するため、片方のファミリ未対応のリンクが混ざるとそのファミリの経路が壊れる — この不一致問題を、地図を分けることで解く。OSPFv2/v3 並走が「プロトコルが別」という形で最初から2枚の地図に分かれているのと対比される。
+- **初出章**: `04_ipv6/04_routing_ipv6.md`
+- **関連RFC**: RFC 5120
+- **関連用語**: IS-IS、SPF、デュアルスタック
 
 ### 無限カウント(counting to infinity)
 

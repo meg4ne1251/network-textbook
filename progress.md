@@ -11,8 +11,8 @@
 ## 現在の状態
 
 - 完了ステップ: Step 0〜6(第1部完了)、Step 7〜11(第2部完了)、Step 12〜17(第3部完了)、
-  Step 18〜20(第4部進行中)
-- 次のステップ: Step 21 `04_ipv6/04_routing_ipv6.md`(IPv6 ルーティング)
+  Step 18〜21(第4部進行中)
+- 次のステップ: Step 22 `04_ipv6/05_transition_technologies.md`(MAP-E, DS-Lite, NAT64)
 
 ---
 
@@ -617,3 +617,45 @@
   変更されている場合がある。(5) RFC 4191 の Prf ビット・RFC 8319(RA 間隔の上限拡張)
   の細部には立ち入っていない。
 - 次のステップ: Step 21 `04_ipv6/04_routing_ipv6.md` から着手する
+
+## Step 21: `04_ipv6/04_routing_ipv6.md` (完了日: 2026-07-07)
+
+- 完了内容: IPv6 ルーティングの章を執筆。「原理(ロンゲストマッチ・ホップバイホップ・
+  3段フィルタ)は不変、変わるのは3点(リンクローカルネクストホップ/経路上
+  フラグメンテーション廃止に伴う ICMPv6 の転送への組み込み/プロトコル自身の対応)」を
+  導入の軸に、RA(ホストへの供給)とルーティングプロトコル(ルータ間の交換)の分業、
+  リンクローカルネクストホップの3つの理由と RFC 7404(リンクローカルのみのインフラ)、
+  静的経路のインタフェース必須、直結経路とオンリンクの分離(L フラグを落とす設計)、
+  IGP 対応の2流儀(新版新造 = OSPFv3/RIPng vs 入れ物拡張 = IS-IS TLV/MP-BGP)、
+  OSPFv3(RFC 5340)の5変更点(リンクローカル足回り、ルータ ID 識別、per-link +
+  Instance ID、トポロジとアドレスの分離 = Link-LSA/Intra-Area-Prefix-LSA、認証の外出し
+  = RFC 7166)と RFC 5838、IS-IS(RFC 5308)とマルチトポロジ(RFC 5120)、
+  RFC 2545 のネクストホップ2個併記の伏線回収(直結の隣人用と遠くの iBGP ピア用)、
+  デュアルスタック = 独立した2枚の地図(ships in the night)、OSPFv3 ヘッダ・
+  LS Type(U/S2/S1 ビット)の図と v2 対応表、プレフィックス追加が SPF を走らせない
+  ウォークスルー(Mermaid)、Packet Too Big / Time Exceeded とレート制限(RFC 4443/
+  4890/8201)、FRR の ospf6 設定例(ネットワーク文にプレフィックスが出ない、
+  fe80 ネクストホップの読み方)、トラブルシューティング4種(静的経路のゾーンの罠、
+  OSPFv3 隣接 = ルータ ID 欠落・Instance ID 不一致・ff02::5 と MLD スヌーピング再演、
+  PMTUD ブラックホール、2枚の地図の不一致 = ファミリ別 traceroute での切り分け)を記載。
+- 決定事項: (1) LSA の U ビット(未知の型への動作の内蔵)を BGP の optional/transitive
+  フラグと同じ「後方互換な拡張性」の思想として第3部03章に接続した。
+  (2) 実務の前提: OSPFv2 + OSPFv3 の並走を本書の以後の前提とする(RFC 5838 での
+  一本化は言及のみ)。RIPng は存在の言及のみ。(3) OSPFv3 の LSA 詳細は Function Code
+  1〜9 の表まで(NSSA・仮想リンクの細部には立ち入らない)。(4) IS-IS の TLV 拡張性を
+  第5部(SR 対応)への伏線として明示。(5) 用語集へ3語登録(OSPFv3、PMTUD、
+  マルチトポロジ)+ OSPF(関連用語に OSPFv3)・IS-IS(RFC 5308 と対比の追記)・
+  MTU(関連用語に PMTUD)を更新。(6) 03章の「(後述: `04_routing_ipv6.md`)」参照を
+  リンク化。
+- 未解決・要検証事項: (1) FRR の OSPFv3 設定体系はバージョン差が大きい
+  (interface 配下の `ipv6 ospf6 area` は比較的新しい形。旧版は `router ospf6` 配下の
+  `interface eth0 area 0.0.0.0`)。出力例(`show ipv6 ospf6 neighbor` の列、
+  `ip -6 route` の `proto ospf6` 表記)も代表的な形で記載。(2) 静的経路のエラー文言
+  (`IPv6 next hop is link-local...`)は iproute2 の実際の文言の要旨であり要確認。
+  (3) 「OSPFv2 ではプレフィックス変更が SPF 再計算を要した」は概括であり、実装は
+  スロットリング・増分計算で緩和している(原理の対比としては正しい)。(4) Flow Label を
+  ECMP ハッシュに使う実装(RFC 6438 系)は一言の言及のみで RFC 番号は挙げていない。
+  (5) OSPFv3 の Hello に prefix が載らない代わりのネクストホップ学習の記述
+  (「Link-LSA / Hello の送信元から知る」)は要旨の簡略化(正確にはネクストホップは
+  Hello 等の送信元リンクローカルから得る)。
+- 次のステップ: Step 22 `04_ipv6/05_transition_technologies.md` から着手する
