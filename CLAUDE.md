@@ -26,6 +26,8 @@
 2. **BGP** — eBGP/iBGP基礎からポリシー制御、MP-BGP、大規模設計まで
 3. **IPv6** — アドレッシングからNDP、移行技術(MAP-E, DS-Liteなど)まで
 4. **MPLS / SRv6** — ラベルスイッチングからセグメントルーティングまで
+5. **冗長化(STP / FHRP / LAG)** — L2/L3 冗長化の基礎(README の「今後の拡張予定」第6部。
+   全26ステップ完了後に追加した拡張分野)
 
 各分類は独立したディレクトリを持ち、その中で「初学者卒業直後でも読める基礎」→
 「理論(RFCベース)」→「応用」→「実装例」の順に章を分割する。
@@ -69,6 +71,11 @@ network-textbook/
 │   ├── 02_ldp_rsvp_te.md
 │   ├── 03_l3vpn_l2vpn.md
 │   └── 04_srv6.md
+├── 06_redundancy/
+│   ├── 01_stp_basics.md           # L2ループ問題とSTP(802.1D)、から開始
+│   ├── 02_rstp_mstp.md            # RSTP(802.1w系)/ MSTP(802.1s系)
+│   ├── 03_fhrp_vrrp.md            # FHRPの概念、VRRP(RFC 9568)/HSRP
+│   └── 04_lag_mlag.md             # リンクアグリゲーション(802.1AX/LACP)、MLAG、STPに頼らない設計
 ├── shared/
 │   ├── glossary.md                # 全章共通の用語集(初出時にここへ追記)
 │   └── style_guide.md             # このCLAUDE.mdの執筆ルールの実例集
@@ -109,6 +116,15 @@ network-textbook/
 | 24 | `05_mpls_srv6/02_ldp_rsvp_te.md` | LDP, RSVP-TE |
 | 25 | `05_mpls_srv6/03_l3vpn_l2vpn.md` | L3VPN, L2VPN |
 | 26 | `05_mpls_srv6/04_srv6.md` | セグメントルーティング(SRv6) |
+
+### 拡張ステップ(第6部以降、全26ステップ完了後に追加)
+
+| Step | 対象ファイル | 内容 |
+|---|---|---|
+| 27 | `06_redundancy/01_stp_basics.md` | L2ループ問題とSTP(802.1D) |
+| 28 | `06_redundancy/02_rstp_mstp.md` | RSTP / MSTP |
+| 29 | `06_redundancy/03_fhrp_vrrp.md` | FHRP(VRRP / HSRP) |
+| 30 | `06_redundancy/04_lag_mlag.md` | リンクアグリゲーション(LACP)、MLAG |
 
 ## 進捗管理ファイルの運用
 
