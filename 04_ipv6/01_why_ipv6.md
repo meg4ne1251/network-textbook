@@ -7,7 +7,7 @@ NAT でも解決にならなかったのか — を出発点に、IPv6(RFC 8200)
 何を変え、何をあえて変えなかったのかという設計思想を扱う。第4部の起点である。
 前提知識は [第1部01章](../01_fundamentals/01_l2_l3_recap.md)(IPv4 ヘッダ、
 次ヘッダ連鎖、PMTUD)と [第1部02章](../01_fundamentals/02_routing_table_basics.md)
-(CIDR、経路集約)。アドレス体系の詳細は(後述: `02_addressing.md`)、
+(CIDR、経路集約)。アドレス体系の詳細は [02章](02_addressing.md)、
 NDP と自動構成は(後述: `03_ndp_slaac.md`)で扱う。
 
 ## 導入 — 32 ビットの天井
