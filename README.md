@@ -128,7 +128,7 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 | 章 | 内容 |
 |---|---|
 | [`01_stp_basics.md`](06_redundancy/01_stp_basics.md) | L2 ループ問題と STP(802.1D) |
-| `02_rstp_mstp.md`(未執筆) | RSTP / MSTP |
+| [`02_rstp_mstp.md`](06_redundancy/02_rstp_mstp.md) | RSTP / MSTP |
 | `03_fhrp_vrrp.md`(未執筆) | FHRP(VRRP / HSRP) |
 | `04_lag_mlag.md`(未執筆) | リンクアグリゲーション(LACP)、MLAG |
 
