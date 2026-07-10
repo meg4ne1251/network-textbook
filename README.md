@@ -139,7 +139,7 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 | 章 | 内容 |
 |---|---|
 | [`01_qos_basics.md`](07_qos/01_qos_basics.md) | QoS の基礎(輻輳、遅延/ジッタ/損失、IntServ vs DiffServ) |
-| `02_classification_marking.md` | 分類とマーキング(DSCP/PHB、802.1p CoS、信頼境界)【執筆予定】 |
+| [`02_classification_marking.md`](07_qos/02_classification_marking.md) | 分類とマーキング(DSCP/PHB、802.1p CoS、信頼境界) |
 | `03_queuing_scheduling.md` | キューイングとスケジューリング(PQ/WFQ、WRED、AQM)【執筆予定】 |
 | `04_shaping_policing.md` | シェーピングとポリシング(トークンバケット、ECN)【執筆予定】 |
 
