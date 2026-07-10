@@ -187,7 +187,7 @@ AFx3 → AFx2 → AFx1 の順に犠牲になる。「同じクラスの中に
 **降格マーキング**して通し、輻輳したときだけ超過分から死んでいく、
 という使い方である(三色マーカー。後述: `04_shaping_policing.md`)。
 廃棄優先度を読んで実際に選択的に捨てる機構(WRED)は
-次章(`03_queuing_scheduling.md`)で扱う。
+[次章](03_queuing_scheduling.md)で扱う。
 
 **その他 — LE(Lower Effort、DSCP 1 = 000001)— RFC 8622**
 
