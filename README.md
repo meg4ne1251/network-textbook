@@ -54,7 +54,7 @@ VLAN やルーティングといった言葉の意味は分かるものの、体
 
 ## 構成
 
-第1部〜第5部・全26章(完結)+ 拡張の第6部(執筆中)の構成です。
+第1部〜第5部・全26章(完結)+ 拡張の第6部(完結)・第7部(執筆中)の構成です。
 各分野は「そもそも何のための技術か」という基礎から立ち上げ、
 理論(RFCベース)→ プロトコル動作の詳細 → トラブルシューティングの順に深めていきます。
 
@@ -132,6 +132,17 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 | [`03_fhrp_vrrp.md`](06_redundancy/03_fhrp_vrrp.md) | FHRP(VRRP / HSRP) |
 | [`04_lag_mlag.md`](06_redundancy/04_lag_mlag.md) | リンクアグリゲーション(LACP)、MLAG |
 
+### 第7部 QoS — [`07_qos/`](07_qos/)【執筆中】
+
+なぜ QoS が必要か、から分類・マーキング、キューイング、シェーピング/ポリシングまで。
+
+| 章 | 内容 |
+|---|---|
+| [`01_qos_basics.md`](07_qos/01_qos_basics.md) | QoS の基礎(輻輳、遅延/ジッタ/損失、IntServ vs DiffServ) |
+| `02_classification_marking.md` | 分類とマーキング(DSCP/PHB、802.1p CoS、信頼境界)【執筆予定】 |
+| `03_queuing_scheduling.md` | キューイングとスケジューリング(PQ/WFQ、WRED、AQM)【執筆予定】 |
+| `04_shaping_policing.md` | シェーピングとポリシング(トークンバケット、ECN)【執筆予定】 |
+
 ### 補助ファイル
 
 - [`shared/glossary.md`](shared/glossary.md) — 全章共通の用語集(初出時に追記)
@@ -146,7 +157,7 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 | 部 | 内容 | 状態 |
 |---|---|---|
 | 第6部 | FHRP(VRRP/HSRP)+ STP/RSTP/MSTP + LAG/MLAG — L2/L3 冗長化の基礎 | 完成(上記参照) |
-| 第7部 | QoS — マーキング(DSCP/CoS)、キューイング、シェーピング/ポリシング | 未着手 |
+| 第7部 | QoS — マーキング(DSCP/CoS)、キューイング、シェーピング/ポリシング | 執筆中(上記参照) |
 | 第8部 | セキュリティ基礎 — ACL、ゾーンベースファイアウォール、IPsec、Zero Trust | 未着手 |
 | 第9部 | ネットワーク自動化 — NETCONF/YANG | 未着手 |
 

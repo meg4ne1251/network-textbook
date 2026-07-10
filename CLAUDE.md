@@ -28,6 +28,8 @@
 4. **MPLS / SRv6** — ラベルスイッチングからセグメントルーティングまで
 5. **冗長化(STP / FHRP / LAG)** — L2/L3 冗長化の基礎(README の「今後の拡張予定」第6部。
    全26ステップ完了後に追加した拡張分野)
+6. **QoS** — 分類・マーキング(DSCP/CoS)からキューイング、シェーピング/ポリシングまで
+   (README の「今後の拡張予定」第7部。第6部完結後に追加した拡張分野)
 
 各分類は独立したディレクトリを持ち、その中で「初学者卒業直後でも読める基礎」→
 「理論(RFCベース)」→「応用」→「実装例」の順に章を分割する。
@@ -76,6 +78,11 @@ network-textbook/
 │   ├── 02_rstp_mstp.md            # RSTP(802.1w系)/ MSTP(802.1s系)
 │   ├── 03_fhrp_vrrp.md            # FHRPの概念、VRRP(RFC 9568)/HSRP
 │   └── 04_lag_mlag.md             # リンクアグリゲーション(802.1AX/LACP)、MLAG、STPに頼らない設計
+├── 07_qos/
+│   ├── 01_qos_basics.md           # なぜQoSか(輻輳、遅延/ジッタ/損失、IntServ vs DiffServ)、から開始
+│   ├── 02_classification_marking.md  # 分類とマーキング(DSCP/PHB、802.1p CoS、信頼境界)
+│   ├── 03_queuing_scheduling.md   # キューイングとスケジューリング(PQ/WFQ/DRR、WRED、AQM)
+│   └── 04_shaping_policing.md     # シェーピングとポリシング(トークンバケット、三色マーカー、ECN)
 ├── shared/
 │   ├── glossary.md                # 全章共通の用語集(初出時にここへ追記)
 │   └── style_guide.md             # このCLAUDE.mdの執筆ルールの実例集
@@ -125,6 +132,15 @@ network-textbook/
 | 28 | `06_redundancy/02_rstp_mstp.md` | RSTP / MSTP |
 | 29 | `06_redundancy/03_fhrp_vrrp.md` | FHRP(VRRP / HSRP) |
 | 30 | `06_redundancy/04_lag_mlag.md` | リンクアグリゲーション(LACP)、MLAG |
+
+### 拡張ステップ(第7部 QoS、Step 30 完了後に追加)
+
+| Step | 対象ファイル | 内容 |
+|---|---|---|
+| 31 | `07_qos/01_qos_basics.md` | なぜQoSか(輻輳、遅延/ジッタ/損失、IntServ vs DiffServ) |
+| 32 | `07_qos/02_classification_marking.md` | 分類とマーキング(DSCP/PHB、802.1p CoS、信頼境界) |
+| 33 | `07_qos/03_queuing_scheduling.md` | キューイングとスケジューリング(PQ/WFQ/DRR、WRED、AQM) |
+| 34 | `07_qos/04_shaping_policing.md` | シェーピングとポリシング(トークンバケット、三色マーカー、ECN) |
 
 ## 進捗管理ファイルの運用
 
