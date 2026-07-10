@@ -121,7 +121,7 @@ eBGP/iBGP 基礎からポリシー制御、MP-BGP、大規模設計まで。
 | [`03_l3vpn_l2vpn.md`](05_mpls_srv6/03_l3vpn_l2vpn.md) | L3VPN, L2VPN |
 | [`04_srv6.md`](05_mpls_srv6/04_srv6.md) | セグメントルーティング(SRv6) |
 
-### 第6部 冗長化(L2/L3) — [`06_redundancy/`](06_redundancy/) 【執筆中】
+### 第6部 冗長化(L2/L3) — [`06_redundancy/`](06_redundancy/)
 
 STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化の基礎。
 
@@ -130,7 +130,7 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 | [`01_stp_basics.md`](06_redundancy/01_stp_basics.md) | L2 ループ問題と STP(802.1D) |
 | [`02_rstp_mstp.md`](06_redundancy/02_rstp_mstp.md) | RSTP / MSTP |
 | [`03_fhrp_vrrp.md`](06_redundancy/03_fhrp_vrrp.md) | FHRP(VRRP / HSRP) |
-| `04_lag_mlag.md`(未執筆) | リンクアグリゲーション(LACP)、MLAG |
+| [`04_lag_mlag.md`](06_redundancy/04_lag_mlag.md) | リンクアグリゲーション(LACP)、MLAG |
 
 ### 補助ファイル
 
@@ -145,7 +145,7 @@ STP/RSTP から FHRP、リンクアグリゲーションまで、L2/L3 冗長化
 
 | 部 | 内容 | 状態 |
 |---|---|---|
-| 第6部 | FHRP(VRRP/HSRP)+ STP/RSTP/MSTP + LAG/MLAG — L2/L3 冗長化の基礎 | 執筆中(上記参照) |
+| 第6部 | FHRP(VRRP/HSRP)+ STP/RSTP/MSTP + LAG/MLAG — L2/L3 冗長化の基礎 | 完成(上記参照) |
 | 第7部 | QoS — マーキング(DSCP/CoS)、キューイング、シェーピング/ポリシング | 未着手 |
 | 第8部 | セキュリティ基礎 — ACL、ゾーンベースファイアウォール、IPsec、Zero Trust | 未着手 |
 | 第9部 | ネットワーク自動化 — NETCONF/YANG | 未着手 |
