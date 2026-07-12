@@ -65,6 +65,16 @@
   (初期仕様は最悪値だった/実装差はその名残)を1文追記して、断定に注釈を付けた。
 - 情報源: RFC 4271 §9.1.2.2(RFC 4451 経由で条文文言を確認)、RFC 4451(原文で確認)。
 
+### A4: `03_bgp/05_mp_bgp.md` — IPv4 固有3箇所の引用 (完了日: 2026-07-13)
+
+- 結果: 本文の引用は正確。RFC 4760 §1 原文「The only three pieces of information
+  carried by BGP-4 that are IPv4 specific are (a) the NEXT_HOP attribute … (b)
+  AGGREGATOR … and (c) NLRI …」と一致。AGGREGATOR は MP-BGP で拡張せず NLRI・
+  NEXT_HOP だけを差し替え可能にした、という本文の整理も妥当。
+- 対応: 本文引用に「Section 1」を明記。系譜が RFC 2283→4760 と中間版を飛ばして
+  いたため、RFC 2858(2000)を補って正確化。引用文の (a)(c) の括弧補足も原文に合わせた。
+- 情報源: RFC 4760 §1(原文で確認)。obsoletes は RFC 2858(RFC 2283 は §11 で比較言及)。
+
 ---
 
 ## ステップ完了ログ
