@@ -222,6 +222,36 @@
 - 情報源: APNIC Blog「Google hits 50% IPv6」(2026-04)、Google IPv6 統計、
   IPv4 Global / IPXO 等の 2026 年相場レポート。
 
+### B3: `04_ipv6/02_addressing.md` — ドキュメント用 3fff::/20 (完了日: 2026-07-13)
+
+- 結果: 正確。RFC 9637「Expanding the IPv6 Documentation Space」が IANA に
+  3fff::/20 を予約(2024-07-23)、RFC 3849 の 2001:db8::/32 を補完する大きめの
+  ドキュメント用ブロック。本文の特殊用途アドレス表「2001:db8::/32、3fff::/20 →
+  RFC 3849、RFC 9637」は正しい。
+- 対応: 修正不要。
+- 情報源: RFC 9637(RFC Editor)、IANA IPv6 Special-Purpose Address Registry、
+  APNIC/LACNIC/ipSpace の解説。
+
+### B4: `04_ipv6/03_ndp_slaac.md` — 一時アドレス寿命 / NUD 既定値 (完了日: 2026-07-13)
+
+- 結果(a) 一時アドレス寿命: 本文は TEMP_PREFERRED_LIFETIME の具体値を明示して
+  いない(RFC 8981 の既定 1 日=86400 秒は事実として正しいが、本文はRFC番号の
+  参照のみで値の断定はしていない)。訂正対象なし。
+- 結果(b) NUD 既定値: RFC 4861 §10 の定数と全一致。REACHABLE_TIME=30 秒、
+  MIN/MAX_RANDOM_FACTOR=0.5/1.5(本文「REACHABLE の寿命は既定 30 秒 × 乱数
+  0.5〜1.5」)、DELAY_FIRST_PROBE_TIME=5 秒、RETRANS_TIMER=1000ms=1 秒、
+  MAX_UNICAST_SOLICIT=3(本文「ユニキャスト NS を 1 秒間隔で最大 3 回」)。
+  DAD の DupAddrDetectTransmits 既定 1 回(RFC 4862)も本文と一致。
+- 対応: 修正不要。
+- 情報源: RFC 4861 §10(原文で確認)、RFC 4862 / RFC 8981(既定値)。
+
+---
+
+**Tier B(B1〜B4)完了。** 本文更新は1件のみ(B2-b IPv6 到達率を 2026 年の 50% 突破に
+更新)。残りは現時点値と整合していることを一次情報で確認(修正不要)。
+次は Tier C(実装/バージョン依存の出力例の免責注記が全章で一貫しているかの通し確認、
+および C 表末尾の「A 寄り」の個別数値の裏取り)。
+
 ---
 
 ## ステップ完了ログ
