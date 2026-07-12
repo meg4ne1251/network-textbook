@@ -18,7 +18,7 @@
 
 | # | 章ファイル | 検証内容 | 対象一次情報源 | 状態 |
 |---|---|---|---|---|
-| A1 | `02_vlan_vxlan_evpn/01_vlan_basics.md` | CFI → DEI 再定義の正確な版(本文は「802.1ad(2005)でS-TAGに導入 → 802.1Q-2011でC-TAGのCFIをDEIに再定義」と記載) | IEEE 802.1Q-2011 / 802.1ad-2005 | 未 |
+| A1 | `02_vlan_vxlan_evpn/01_vlan_basics.md` | CFI → DEI 再定義の正確な版(本文は「802.1ad(2005)でS-TAGに導入 → 802.1Q-2011でC-TAGのCFIをDEIに再定義」と記載) | IEEE 802.1Q-2011 / 802.1ad-2005 | 済(修正) — 802.1ad-2005 が S-TAG に DEI 導入、802.1Q-2011 が 802.1ad 統合と同時に C-TAG のビットを DEI に再定義。本文を版特定の記述に更新 |
 | A2 | `03_bgp/01_bgp_basics.md` | ホールドタイム推奨値(Hold 90s / Keepalive 30s / ConnectRetry 120s)と、本文併記の「実装既定180秒/60秒」の整合 | RFC 4271 §10, §4.2 | 未 |
 | A3 | `03_bgp/03_path_attributes.md` | 「MED 未設定は最小値0(最優先)として扱う」の条文文言(RFC 1771時代は未規定だった経緯も) | RFC 4271 §9.1.2.2 | 未 |
 | A4 | `03_bgp/05_mp_bgp.md` | 「BGP-4でIPv4固有は3箇所(NEXT_HOP・AGGREGATOR・NLRI)」の引用の正確性(AGGREGATORは拡張不要とした整理も) | RFC 4760 §1 | 未 |

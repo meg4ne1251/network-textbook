@@ -212,9 +212,10 @@ VLAN 間の通信はルータを経由する。ルータの置き方には歴史
 - **PCP(Priority Code Point、3ビット)**: 優先度 0〜7。L2 レベルの QoS
   (かつて IEEE 802.1p と呼ばれた仕組み)に使われる。VLAN 分離とは独立の機能である。
 - **DEI(Drop Eligible Indicator、1ビット)**: 輻輳時に優先的に廃棄してよい
-  フレームであることを示す。初版の 802.1Q では CFI(Canonical Format Indicator、
-  トークンリングとの互換用)と定義されていたが、トークンリングの退場に伴い
-  現行仕様で DEI に再定義された。
+  フレームであることを示す。初版の 802.1Q ではこのビットは CFI(Canonical Format
+  Indicator、トークンリングとの互換用)と定義されていた。DEI としての用法は
+  IEEE 802.1ad-2005 が S-TAG に導入したのが先で、トークンリングの退場に伴い、
+  802.1ad を統合した **IEEE 802.1Q-2011** で C-TAG のこのビットも DEI に再定義された。
 - **VID(VLAN Identifier、12ビット)**: 所属 VLAN の識別子。0〜4095 の 4096 値のうち、
   **0 と 4095(0xFFF)は予約**されており、VLAN の識別に使えるのは **1〜4094** である。
   - **VID 0**: 「優先度タグ付きフレーム(priority-tagged frame)」を意味する。
