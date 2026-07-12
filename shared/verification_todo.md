@@ -38,7 +38,7 @@
 
 | # | 章ファイル | 検証内容 | 参照先 | 状態 |
 |---|---|---|---|---|
-| B1 | `01_fundamentals/02_routing_table_basics.md` | 「2026年時点でIPv4フルルート約100万経路」の概数 | CIDR Report / 各RIRの統計 | 未 |
+| B1 | `01_fundamentals/02_routing_table_basics.md` | 「2026年時点でIPv4フルルート約100万経路」の概数 | CIDR Report / 各RIRの統計 | 済(確認・修正不要) — 2026-05時点のAS65000 BGPテーブルで 1,049,583 経路(約105万)。100万突破は2024年頃。本文「約100万経路」は現時点値と整合 |
 | B2 | `04_ipv6/01_why_ipv6.md` | (a) RIR枯渇日付(APNIC 2011-04, RIPE NCC 2019-11ほか) (b) IPv6到達可能率「半分近く」 (c) 移転市場「1アドレス数十ドル」 | Google IPv6統計 / NRO・各RIR | 未 |
 | B3 | `04_ipv6/02_addressing.md` | ドキュメント用 3fff::/20(RFC 9637, 2024追加)の記載 | RFC 9637 | 未 |
 | B4 | `04_ipv6/03_ndp_slaac.md` | (a) 一時アドレス寿命 TEMP_PREFERRED_LIFETIME=1日 (b) NUD既定値(BaseReachableTime 30s, DELAY 5s, ユニキャストNS 3回) | RFC 8981 / RFC 4861 | 未 |
