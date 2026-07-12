@@ -129,6 +129,13 @@
 - 情報源: RFC 5036 §2.5.2(原文で確認)、RFC 2205 §3.7(WebFetch 切れのため WebSearch で
   既定 30 秒・[0.5R,1.5R] を確認)。
 
+### A9: `05_mpls_srv6/03_l3vpn_l2vpn.md` — RT Constraint の SAFI 値 (完了日: 2026-07-13)
+
+- 結果: 本文「RT Constraint = AFI 1 / SAFI 132(RFC 4684)」は正しい。IANA の
+  SAFI レジストリで値 132 = "Route Target constrains"、Reference は RFC 4684。
+- 対応: 本文は既に SAFI 132 と RFC 4684 を明記しており修正不要。
+- 情報源: IANA SAFI namespace レジストリ(原本で確認)。
+
 ---
 
 ## ステップ完了ログ
