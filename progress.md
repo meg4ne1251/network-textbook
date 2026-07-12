@@ -75,6 +75,18 @@
   いたため、RFC 2858(2000)を補って正確化。引用文の (a)(c) の括弧補足も原文に合わせた。
 - 情報源: RFC 4760 §1(原文で確認)。obsoletes は RFC 2858(RFC 2283 は §11 で比較言及)。
 
+### A5: `03_bgp/06_large_scale_design.md` — RR 経路選択修正の挿入位置 (完了日: 2026-07-13)
+
+- 結果: 本文の記述「BGP Identifier 比較の直後(ピアアドレス比較の前)に CLUSTER_LIST
+  短優先を挿入」は正確。RFC 4456 §9 原文は「in Step f) the ORIGINATOR_ID SHOULD be
+  treated as the BGP Identifier of the BGP speaker that has advertised the route」
+  「the following rule SHOULD be inserted between Steps f) and g): a BGP Speaker
+  SHOULD prefer a route with the shorter CLUSTER_LIST length」。Step f)=BGP Identifier
+  比較、g)=ピアアドレス比較なので、本文の「直後」は f)/g) 間に対応する。
+- 対応: 本文が step 番号を書いていなかったため、RFC 4456 §9 の Step f)/g) 表現を
+  各修正に明記して条文対応を追記。
+- 情報源: RFC 4456 §9(原文で確認)。
+
 ---
 
 ## ステップ完了ログ

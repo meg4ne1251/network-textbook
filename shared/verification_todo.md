@@ -22,7 +22,7 @@
 | A2 | `03_bgp/01_bgp_basics.md` | ホールドタイム推奨値(Hold 90s / Keepalive 30s / ConnectRetry 120s)と、本文併記の「実装既定180秒/60秒」の整合 | RFC 4271 §10, §4.2 | 済(確認・注記) — §10 の推奨値 ConnectRetry 120 / Hold 90 / Keepalive 30 秒、§4.4 の「1/3 間隔・1 秒未満不可」、§4.2 の「双方の min を採用」すべて本文と一致。実装既定 180/60 は Cisco/FRR 慣例(本文でその旨明記済)。本文にセクション番号を補記 |
 | A3 | `03_bgp/03_path_attributes.md` | 「MED 未設定は最小値0(最優先)として扱う」の条文文言(RFC 1771時代は未規定だった経緯も) | RFC 4271 §9.1.2.2 | 済(修正) — §9.1.2.2 は「MED なしは最小値0を割り当てる=最優先」で本文の断定は正しい。ただし RFC 4451 が「初期仕様は逆に最悪値 2³²−1 を割り当てた」経緯を明文化。本文にセクション番号と RFC 4451 の経緯を追記 |
 | A4 | `03_bgp/05_mp_bgp.md` | 「BGP-4でIPv4固有は3箇所(NEXT_HOP・AGGREGATOR・NLRI)」の引用の正確性(AGGREGATORは拡張不要とした整理も) | RFC 4760 §1 | 済(確認・微修正) — §1原文「The only three pieces … are (a) NEXT_HOP (b) AGGREGATOR (c) NLRI」と本文引用は一致。AGGREGATOR非拡張の整理も妥当。系譜に中間版RFC 2858(2000)を補い、節番号明記 |
-| A5 | `03_bgp/06_large_scale_design.md` | RFC 4456の経路選択修正の挿入位置(本文「BGP Identifier比較の直後」 vs 条文 Step f)/g)) | RFC 4456 §9 | 未 |
+| A5 | `03_bgp/06_large_scale_design.md` | RFC 4456の経路選択修正の挿入位置(本文「BGP Identifier比較の直後」 vs 条文 Step f)/g)) | RFC 4456 §9 | 済(確認・注記) — §9原文「in Step f) the ORIGINATOR_ID SHOULD be treated as the BGP Identifier」「inserted between Steps f) and g): prefer shorter CLUSTER_LIST」で本文の位置づけは正確。本文にStep f)/g)の対応を明記 |
 | A6 | `04_ipv6/05_transition_technologies.md` | (a) DS-Lite「アクセス網MTU ≥1540 を SHOULD」 (b) MAP-Eポート計算例(PSID=52→1232–1235, a=6) | RFC 6333 / RFC 7597 App.B | 未 |
 | A7 | `05_mpls_srv6/01_mpls_basics.md` | ICMPトンネリング(エラーをLSP先まで運んで返す)の規定 | RFC 3032 §2.3.2 | 未 |
 | A8 | `05_mpls_srv6/02_ldp_rsvp_te.md` | (a) LDPセッション能動側=transport address大小比較 (b) RSVPリフレッシュ R=30s | RFC 5036 §2.5.2 / RFC 2205 | 未 |
