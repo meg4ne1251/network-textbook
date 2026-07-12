@@ -30,7 +30,7 @@
 | A10 | `05_mpls_srv6/04_srv6.md` | (a) 圧縮SID(C-SID/uSID)のRFC番号=9800 と包含関係 (b) SRv6 L3 Service TLVでSIDを配る記述 | RFC 9800 / RFC 9252 | 済(確認・補記) — (a) RFC 9800 = "Compressed SRv6 Segment List Encoding"、NEXT/REPLACE-C-SIDフレーバでuSIDを含む。番号・包含とも正しい。(b) RFC 9252 = "BGP Overlay Services Based on SRv6"、BGP Prefix-SID属性内のSRv6 L3 Service TLV(Type 5)がEnd.DT4等のSIDを配布=VPNラベル相当。本文に機構名を補記 |
 | A11 | `06_redundancy/03_fhrp_vrrp.md` | (a) RFC 9568のMaster→Active改称に伴うタイマー名(Master_Down_Interval等の新名称) (b) VRRPv3のIPv4でも擬似ヘッダ込みチェックサム (c) IPv6 RA送信の主体 | RFC 9568 | 済(**うち(b)は事実誤り修正**) — (a) RFC 9568はタイマーもActive_Down_Interval/Timer・Active_Adver_Intervalに改称(Skew_Time不変)。本書はMaster_*表記継続だが改称を併記追加。(b) **本文の「v3はIPv4でも擬似ヘッダ」は誤り**。RFC 9568はIPv4=擬似ヘッダなし(v2後方互換)、IPv6のみ擬似ヘッダ(RFC 8200§8.1)。RFC 5798の曖昧さと実装分裂の経緯ごと修正。(c) Active Routerが送信主体、§5.2.9「第一アドレスはLL必須」で本文は妥当、根拠を補記 |
 | A12 | `07_qos/04_shaping_policing.md` | trTCMのgreenが「Tp と Tc の両方から引く」動作と変数名(Tp/Tc)対応 | RFC 2698 | 済(確認・修正不要) — RFC 2698 color-blind擬似コード「Tp-B<0→red / Tc-B<0→yellow(Tpのみ減算) / else→green(TpとTc両方減算)」と本文が完全一致。変数名Tp(PBS/PIR)・Tc(CBS/CIR)も一致 |
-| A13 | `01_fundamentals/04_distance_vector_link_state.md` | マイクロループ対策(uloop delay)の標準化 — 網羅性の観点で追記要否を判断 | RFC 8333 | 未(要否判断) |
+| A13 | `01_fundamentals/04_distance_vector_link_state.md` | マイクロループ対策(uloop delay)の標準化 — 網羅性の観点で追記要否を判断 | RFC 8333 | 済(判断→軽微追記) — RFC 8333 = "Micro-loop Prevention by Introducing a Local Convergence Delay"(番号正しい)。全面解説は第5部SRv6章で扱済み(Step 6決定どおり)。基礎章には対策の存在+RFC 8333+第5部への前方参照を1文だけ追記(全面解説はしない) |
 
 ---
 
