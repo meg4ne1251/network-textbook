@@ -40,6 +40,19 @@
 - 情報源: IEEE 802.1ad-2005 / 802.1Q-2011(全文は非公開のため、IEEE 802.1 資料・Wikipedia
   802.1ad 等の二次情報で版と経緯を確認)。
 
+### A2: `03_bgp/01_bgp_basics.md` — BGP タイマー既定値 (完了日: 2026-07-13)
+
+- 結果: 事実は正しい。RFC 4271 §10 の推奨(既定)値は ConnectRetryTimer 120 秒 /
+  Hold Time 90 秒 / KeepaliveTimer 30 秒。§4.4「KEEPALIVE は Hold Time の 1/3 を目安、
+  1 秒より高頻度に送ってはならない(MUST NOT more frequently than one per second)」、
+  §4.2「受信 OPEN の Hold Time と自分の設定値の小さいほうを採用」も本文の記述と一致。
+  本文併記の「実装既定 180 秒 / KEEPALIVE 60 秒」は Cisco IOS・FRR 等の慣例で、
+  本文でも RFC 推奨値と区別して明記済み。
+- 対応: 本文は正確。検証ルール(確認したセクション番号を残す)に沿って
+  「RFC 4271 Section 10」「Section 4.4」の節番号を本文に補記。
+- 情報源: RFC 4271 §4.2 / §4.4(原文で確認)、§10(WebFetch が長文で切れたため
+  WebSearch で値を確認。tech-invite 版 RFC 4271・networkstraining 等)。
+
 ---
 
 ## ステップ完了ログ
