@@ -136,6 +136,21 @@
 - 対応: 本文は既に SAFI 132 と RFC 4684 を明記しており修正不要。
 - 情報源: IANA SAFI namespace レジストリ(原本で確認)。
 
+### A10: `05_mpls_srv6/04_srv6.md` — 圧縮 SID の RFC 番号 / SRv6 SID の BGP 配布 (完了日: 2026-07-13)
+
+- 結果(a) 圧縮 SID: 正しい。RFC 9800 の正式タイトルは "Compressed SRv6 Segment List
+  Encoding"。RFC 8986 の SRv6 エンドポイント動作に NEXT-C-SID / REPLACE-C-SID の
+  フレーバを追加し、複数の C-SID を 128 ビットのコンテナに詰めて SRH オーバーヘッドを
+  削減する。uSID(micro-SID)はこの方式の呼称。本文の「RFC 9800。uSID を含む」は正確。
+- 結果(b) SRv6 SID の BGP 配布: 正しい。RFC 9252 "BGP Overlay Services Based on
+  Segment Routing over IPv6 (SRv6)" は、BGP Prefix-SID 属性内に SRv6 L3 Service TLV
+  (Type 5)/ SRv6 L2 Service TLV(Type 6)を定義。L3 Service TLV が End.DT4/DT6 等の
+  Service SID を運び、MPLS L3VPN の VPN ラベルに相当する。
+- 対応: (a) は修正不要。(b) は本文が機構名を書いていなかったため
+  「BGP Prefix-SID 属性内の SRv6 L3 Service TLV(Type 5)」を補記。
+- 情報源: RFC 9800(WebSearch で正式タイトル・フレーバを確認)、RFC 9252(原文で
+  TLV 定義を確認)。
+
 ---
 
 ## ステップ完了ログ
