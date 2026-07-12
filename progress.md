@@ -151,6 +151,26 @@
 - 情報源: RFC 9800(WebSearch で正式タイトル・フレーバを確認)、RFC 9252(原文で
   TLV 定義を確認)。
 
+### A11: `06_redundancy/03_fhrp_vrrp.md` — VRRP RFC 9568 の3点(うち1件は事実誤り) (完了日: 2026-07-13)
+
+- 結果(a) 改称: RFC 9568 は Master→Active Router の改称に伴い**タイマー名も改称**。
+  Master_Down_Interval → Active_Down_Interval、Master_Down_Timer → Active_Down_Timer、
+  Master_Adver_Interval → Active_Adver_Interval(Skew_Time は不変)。本書は Master/Backup
+  表記を意図的に継続する方針だが、タイマー名も RFC 9568 で改称された旨を用語節に併記。
+- 結果(b) チェックサム: **本文は誤り**だった。本文は「v3 は擬似ヘッダを含めて計算
+  (v3 の変更点、v2 の IPv4 では含めなかった)」と、v3 で IPv4 も擬似ヘッダを含める
+  かのように記載。実際は RFC 9568 で「IPv4 は擬似ヘッダを含めず(VRRP メッセージ本体
+  のみ、VRRPv2 と後方互換)、IPv6 のみ RFC 8200 §8.1 の擬似ヘッダを含める」。この点は
+  VRRPv3 初版 RFC 5798 の文言が曖昧で、IPv4 に擬似ヘッダを捏造する実装(Arista EOS・
+  FRR)と含めない実装に分裂した経緯があり、RFC 9568 が「IPv4 は含めない」と明確化した。
+  本文をこの正しい説明(+経緯)に全面修正。
+- 結果(c) IPv6 RA: 妥当。RFC 9568 §5.2.9「仮想ルータのアドレス一覧の先頭は
+  リンクローカルアドレス必須」。Active Router が仮想ルータの RA として当該 LL を広告し、
+  切替後もホストのデフォルトルータアドレスが不変になる。本文に §5.2.9 の根拠を補記。
+- 対応: (a) 用語節に改称併記、(b) 全面修正(誤り訂正)、(c) 根拠補記。
+- 情報源: RFC 9568 §5.2.9 / §7.2・用語節・チェックサム節(原文)、RFC 5798 の曖昧さと
+  実装分裂は ipspace.net「Sturgeon's Law, VRRP Edition」および keepalived issue #2324 で確認。
+
 ---
 
 ## ステップ完了ログ
