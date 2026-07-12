@@ -171,6 +171,17 @@
 - 情報源: RFC 9568 §5.2.9 / §7.2・用語節・チェックサム節(原文)、RFC 5798 の曖昧さと
   実装分裂は ipspace.net「Sturgeon's Law, VRRP Edition」および keepalived issue #2324 で確認。
 
+### A12: `07_qos/04_shaping_policing.md` — trTCM の green の動作と変数名 (完了日: 2026-07-13)
+
+- 結果: 本文は正確。RFC 2698 の color-blind メータリング擬似コード
+  「If Tp(t)-B < 0, the packet is red, else if Tc(t)-B < 0, the packet is yellow
+  and Tp is decremented by B, else the packet is green and both Tp and Tc are
+  decremented by B」と本文の判定(red: Tp<B / yellow: Tp≥B かつ Tc<B → Tp のみ /
+  green: 両方≥B → 両方減算)が完全一致。変数名も Tp(P バケット、PBS 深さ、PIR 補充)/
+  Tc(C バケット、CBS 深さ、CIR 補充)で一致。green が両バケットを消費する点も正しい。
+- 対応: 修正不要(本文は既に RFC 2698 を明記)。
+- 情報源: RFC 2698 メータリング節(原文で確認)。
+
 ---
 
 ## ステップ完了ログ
