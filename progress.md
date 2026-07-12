@@ -104,6 +104,20 @@
 - 情報源: RFC 6333 §5.3(原文で確認)、RFC 7597 のポートマッピング式(App.B の例に相当、
   自前で検算)。
 
+### A7: `05_mpls_srv6/01_mpls_basics.md` — MPLS の ICMP トンネリング (完了日: 2026-07-13)
+
+- 結果: 本文の記述は正確。RFC 3032 §2.3.2(Tunneling Private Addresses through a
+  Public Backbone)原文「in order to send an ICMP message to the source of a packet,
+  one can copy the label stack from the original packet to the ICMP message, and
+  then label switch the ICMP message」「This will cause the message to proceed in
+  the direction of the original packet's destination, rather than its source.
+  Unless the message is label switched all the way to the destination host, it
+  will end up, unlabeled, in a router which does know how to route to the source」。
+- 対応: 本文に節番号 §2.3.2 を明記。「ラベルを積む」を「ラベルスタックをコピーして
+  ラベルスイッチ」と原文寄りに、また出口で「経路を知るルータに届いてラベルが外れる」
+  という条文どおりの説明に調整。
+- 情報源: RFC 3032 §2.3.2(原文で確認)。
+
 ---
 
 ## ステップ完了ログ

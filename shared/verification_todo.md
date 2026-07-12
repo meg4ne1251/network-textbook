@@ -24,7 +24,7 @@
 | A4 | `03_bgp/05_mp_bgp.md` | 「BGP-4でIPv4固有は3箇所(NEXT_HOP・AGGREGATOR・NLRI)」の引用の正確性(AGGREGATORは拡張不要とした整理も) | RFC 4760 §1 | 済(確認・微修正) — §1原文「The only three pieces … are (a) NEXT_HOP (b) AGGREGATOR (c) NLRI」と本文引用は一致。AGGREGATOR非拡張の整理も妥当。系譜に中間版RFC 2858(2000)を補い、節番号明記 |
 | A5 | `03_bgp/06_large_scale_design.md` | RFC 4456の経路選択修正の挿入位置(本文「BGP Identifier比較の直後」 vs 条文 Step f)/g)) | RFC 4456 §9 | 済(確認・注記) — §9原文「in Step f) the ORIGINATOR_ID SHOULD be treated as the BGP Identifier」「inserted between Steps f) and g): prefer shorter CLUSTER_LIST」で本文の位置づけは正確。本文にStep f)/g)の対応を明記 |
 | A6 | `04_ipv6/05_transition_technologies.md` | (a) DS-Lite「アクセス網MTU ≥1540 を SHOULD」 (b) MAP-Eポート計算例(PSID=52→1232–1235, a=6) | RFC 6333 / RFC 7597 App.B | 済(確認・微修正) — (a) RFC 6333 §5.3は「B4-AFTR間リンクを少なくとも40オクテット増やす」SHOULD。"1540"は明記せず1500基準の帰結値なので本文をその旨に精密化。(b) a=6,k=8,m=2で Port=A×1024+208+j → A=1:1232-1235, A=63:64720-64723, 252ポート、すべて検算一致で正しい |
-| A7 | `05_mpls_srv6/01_mpls_basics.md` | ICMPトンネリング(エラーをLSP先まで運んで返す)の規定 | RFC 3032 §2.3.2 | 未 |
+| A7 | `05_mpls_srv6/01_mpls_basics.md` | ICMPトンネリング(エラーをLSP先まで運んで返す)の規定 | RFC 3032 §2.3.2 | 済(確認・注記) — §2.3.2原文「copy the label stack from the original packet to the ICMP message, and then label switch the ICMP message」「proceed in the direction of the original packet's destination…end up, unlabeled, in a router which does know how to route to the source」で本文と一致。節番号を明記し表現を原文寄りに |
 | A8 | `05_mpls_srv6/02_ldp_rsvp_te.md` | (a) LDPセッション能動側=transport address大小比較 (b) RSVPリフレッシュ R=30s | RFC 5036 §2.5.2 / RFC 2205 | 未 |
 | A9 | `05_mpls_srv6/03_l3vpn_l2vpn.md` | RT Constraint の SAFI 値 132 | RFC 4684 | 未 |
 | A10 | `05_mpls_srv6/04_srv6.md` | (a) 圧縮SID(C-SID/uSID)のRFC番号=9800 と包含関係 (b) SRv6 L3 Service TLVでSIDを配る記述 | RFC 9800 / RFC 9252 | 未 |
